@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aasu.ai/schemas/relationship.schema.json",
+  "title": "AASU Registry Relationship",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "type": "string", "enum": ["aasu.ai/v1alpha1"] },
+    "kind": { "type": "string", "const": "Relationship" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^rel:[a-z0-9][a-z0-9._:-]{2,255}$"
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["type", "from", "to"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "depends_on",
+            "calls_tool",
+            "retrieves_from",
+            "deployed_on",
+            "trains_on",
+            "uses_model",
+            "uses_prompt_package"
+          ]
+        },
+        "from": {
+          "type": "string",
+          "pattern": "^ci:[a-z0-9][a-z0-9._:-]{2,127}$"
+        },
+        "to": {
+          "type": "string",
+          "pattern": "^ci:[a-z0-9][a-z0-9._:-]{2,127}$"
+        }
+      }
+    }
+  }
+}
+

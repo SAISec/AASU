@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aasu.ai/schemas/configuration-item.schema.json",
+  "title": "AASU Registry ConfigurationItem",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "type": "string", "enum": ["aasu.ai/v1alpha1"] },
+    "kind": { "type": "string", "const": "ConfigurationItem" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "owners"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^ci:[a-z0-9][a-z0-9._:-]{2,127}$"
+        },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "owners": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "id", "role"],
+            "properties": {
+              "type": { "type": "string", "enum": ["team", "user", "system"] },
+              "id": { "type": "string", "minLength": 1 },
+              "role": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "labels": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "url"],
+            "properties": {
+              "type": { "type": "string", "minLength": 1 },
+              "url": { "type": "string", "minLength": 1 },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "required": ["type", "lifecycle"],
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "aasu",
+            "model",
+            "dataset",
+            "prompt_package",
+            "retrieval",
+            "tool",
+            "runtime",
+            "policy",
+            "service",
+            "pipeline",
+            "store"
+          ]
+        },
+        "lifecycle": {
+          "type": "string",
+          "enum": ["planned", "active", "deprecated", "retired"]
+        },
+        "environment": { "type": "string" },
+        "identifiers": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "artifacts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/artifactRef" }
+        },
+        "aasu": { "$ref": "#/$defs/aasuSpec" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "const": "aasu" } },
+            "required": ["type"]
+          },
+          "then": {
+            "required": ["aasu"]
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "artifactRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["git", "huggingface", "container", "url", "artifact"]
+        },
+        "repo": { "type": "string" },
+        "path": { "type": "string" },
+        "rev": { "type": "string" },
+        "repo_id": { "type": "string" },
+        "revision": { "type": "string" },
+        "image": { "type": "string" },
+        "digest": { "type": "string" },
+        "url": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "git" } } },
+          "then": { "required": ["repo", "path", "rev"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "huggingface" } } },
+          "then": { "required": ["repo_id", "revision"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "container" } } },
+          "then": { "required": ["image"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "url" } } },
+          "then": { "required": ["url"] }
+        }
+      ]
+    },
+    "aasuSpec": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["snapshot", "fingerprint"],
+      "properties": {
+        "snapshot": { "$ref": "#/$defs/aasuSnapshot" },
+        "fingerprint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["algorithm", "value"],
+          "properties": {
+            "algorithm": { "type": "string", "enum": ["sha256"] },
+            "value": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+          }
+        },
+        "certification": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "aasuSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["P", "M", "T", "K"],
+      "properties": {
+        "P": { "$ref": "#/$defs/componentRef" },
+        "M": { "$ref": "#/$defs/componentRef" },
+        "R": { "$ref": "#/$defs/componentRef" },
+        "T": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/componentRef" }
+        },
+        "K": { "$ref": "#/$defs/componentRef" }
+      }
+    },
+    "componentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["asset", "version"],
+      "properties": {
+        "asset": {
+          "type": "string",
+          "pattern": "^ci:[a-z0-9][a-z0-9._:-]{2,127}$"
+        },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}
+

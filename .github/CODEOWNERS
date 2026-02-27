@@ -1,0 +1,9 @@
+# Replace placeholders with real GitHub users/teams.
+# Tip: Ensure branch protection requires Code Owner reviews.
+
+/registry/assets/aasu/        @YOUR-ORG/appsec @YOUR-ORG/product-ai
+/registry/assets/tool/        @YOUR-ORG/appsec @YOUR-ORG/platform
+/registry/assets/retrieval/   @YOUR-ORG/appsec @YOUR-ORG/data-platform
+/registry/schemas/            @YOUR-ORG/appsec
+/tools/                       @YOUR-ORG/appsec
+

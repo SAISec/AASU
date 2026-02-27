@@ -1,0 +1,26 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:model:provider:openai:gpt-4o
+  name: OpenAI GPT-4o (provider model)
+  description: Provider-hosted model reference used by AASU snapshots.
+  owners:
+    - type: team
+      id: ml-platform
+      role: primary
+  links:
+    - type: provider-docs
+      url: https://platform.openai.com/
+spec:
+  type: model
+  lifecycle: active
+  model:
+    provider: openai
+    name: gpt-4o
+    version: "provider:rolling"
+    notes: |
+      For provider-hosted models, "version" should capture the organization’s adopted pinning strategy:
+      - "provider:rolling" (highest risk for auditability)
+      - "provider:date:YYYY-MM-DD"
+      - "provider:snapshot:<id>" (best if supported)
+

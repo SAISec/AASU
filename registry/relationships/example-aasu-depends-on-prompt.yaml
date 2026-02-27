@@ -1,0 +1,9 @@
+apiVersion: aasu.ai/v1alpha1
+kind: Relationship
+metadata:
+  id: rel:ci:aasu:customer-support-chatbot:prod:depends_on:prompt_package
+spec:
+  type: depends_on
+  from: ci:aasu:customer-support-chatbot:prod
+  to: ci:prompt_package:customer-support:v3
+

@@ -1,0 +1,24 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:prompt_package:customer-support:v3
+  name: Prompt Package (Customer Support) v3
+  owners:
+    - type: team
+      id: product-ai
+      role: primary
+spec:
+  type: prompt_package
+  lifecycle: active
+  artifacts:
+    - kind: git
+      repo: github.com/acme/customer-support-chatbot
+      path: prompts/customer_support/system.md
+      rev: "git:sha:0123456789abcdef"
+  prompt_package:
+    format: markdown
+    language: en
+    notes: |
+      The referenced Git SHA MUST be a reviewable snapshot (commit SHA or signed tag),
+      not a moving branch name, if you want audit-grade traceability.
+

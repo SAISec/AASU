@@ -1,0 +1,24 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:policy:runtime:customer-support-chatbot-prod
+  name: Runtime Constraints (Customer Support Chatbot / prod)
+  owners:
+    - type: team
+      id: appsec
+      role: security
+spec:
+  type: policy
+  lifecycle: active
+  environment: prod
+  policy:
+    category: runtime-constraints
+    statements:
+      - id: tool-allowlist
+        effect: allow
+        tools:
+          - ci:tool:mcp:refunds
+      - id: pii-redaction
+        effect: enforce
+        description: Redact PII from tool outputs before response to user.
+
