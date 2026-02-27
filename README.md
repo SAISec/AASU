@@ -1,4 +1,6 @@
 # Atomic AI Security Unit (AASU)
+[![Validate registry manifests](https://github.com/SAISec/AASU/actions/workflows/registry-validate.yml/badge.svg)](https://github.com/SAISec/AASU/actions/workflows/registry-validate.yml)
+[![License: Apache-2.0](https://img.shields.io/github/license/SAISec/AASU)](LICENSE)
 
 **AASU = (P, M, R, T, K)**  
 Prompt package, Model instance & parameters, Retrieval configuration, Tool/MCP configuration, Runtime constraints.
@@ -13,6 +15,7 @@ This repository provides:
 - Registry & tooling: `docs/registry.md`
 - GitHub Pages site entry: `docs/index.md`
 - TODOs / roadmap: `TODO.md`
+
 ## AASU unit decomposition
 An Atomic AI Security Unit is a **configuration-bound** unit:
 

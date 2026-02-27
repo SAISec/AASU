@@ -14,4 +14,5 @@ This folder is prepared to be the source for a GitHub Pages site.
 - Protocol page: `docs/protocol.md`
 - Registry tooling: `docs/registry.md`
 - Paper (static): `docs/paper/main.html` and `docs/paper/main.pdf`
+- White paper archive: `docs/whitepapers/index.md`
 
