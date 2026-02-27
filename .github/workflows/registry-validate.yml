@@ -46,7 +46,6 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const core = require('@actions/core');
             const marker = '<!-- aasu-registry-impact -->';
             const { owner, repo } = context.repo;
             const issue_number = context.payload.pull_request.number;
