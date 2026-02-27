@@ -1,0 +1,23 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:model:huggingface:acme:customer-support-llm
+  name: Customer Support LLM (Hugging Face)
+  description: Example of a self-hosted model stored on the Hugging Face Hub.
+  owners:
+    - type: team
+      id: ml-platform
+      role: primary
+spec:
+  type: model
+  lifecycle: active
+  artifacts:
+    - kind: huggingface
+      repo_id: acme/customer-support-llm
+      revision: "git:sha:89abcdef0123456789abcdef0123456789abcdef"
+  model:
+    provider: huggingface
+    repo_id: acme/customer-support-llm
+    notes: |
+      Pin "revision" to a commit SHA or signed tag for auditability.
+

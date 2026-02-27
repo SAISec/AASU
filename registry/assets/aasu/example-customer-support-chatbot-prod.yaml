@@ -1,0 +1,46 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:aasu:customer-support-chatbot:prod
+  name: AASU Snapshot (Customer Support Chatbot / prod)
+  description: Configuration-bound unit (P,M,R,T,K) for prod.
+  owners:
+    - type: team
+      id: product-ai
+      role: primary
+    - type: team
+      id: appsec
+      role: security
+spec:
+  type: aasu
+  lifecycle: active
+  environment: prod
+  aasu:
+    snapshot:
+      P:
+        asset: ci:prompt_package:customer-support:v3
+        version: "git:sha:0123456789abcdef"
+      M:
+        asset: ci:model:provider:openai:gpt-4o
+        version: "provider:rolling"
+      R:
+        asset: ci:retrieval:index:customer-support-kb:prod:2026-02-01
+        version: "index-snapshot:2026-02-01"
+      T:
+        - asset: ci:tool:mcp:refunds
+          version: "image:sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      K:
+        asset: ci:policy:runtime:customer-support-chatbot-prod
+        version: "policy:v1"
+    fingerprint:
+      algorithm: sha256
+      value: sha256:3b608048da92f1cb65d6f6f6405fb887c13617a0ce5db0e1c5cbc1dbd11a4b8b
+    certification:
+      status: pending
+      evidence:
+        - type: test-report
+          ref: artifact:registry/evidence/ci__aasu__customer-support-chatbot__prod/2026-02-21/layer1.json
+      approvals:
+        - role: security
+          approver: team:appsec
+          ref: github-pr:#123

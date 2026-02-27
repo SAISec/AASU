@@ -1,0 +1,19 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:retrieval:index:customer-support-kb:prod:2026-02-01
+  name: Retrieval Index (Customer Support KB / prod / 2026-02-01)
+  owners:
+    - type: team
+      id: data-platform
+      role: primary
+spec:
+  type: retrieval
+  lifecycle: active
+  environment: prod
+  retrieval:
+    store: ci:store:vector:customer-support-kb-prod
+    embedding_model: ci:model:provider:openai:text-embedding-3-large
+    snapshot: "index-snapshot:2026-02-01"
+    pii: true
+

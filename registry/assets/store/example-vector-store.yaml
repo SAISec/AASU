@@ -1,0 +1,17 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:store:vector:customer-support-kb-prod
+  name: Vector Store (Customer Support KB / prod)
+  owners:
+    - type: team
+      id: data-platform
+      role: primary
+spec:
+  type: store
+  lifecycle: active
+  environment: prod
+  store:
+    kind: vector
+    platform: managed
+

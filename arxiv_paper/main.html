@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Author Name(s) Organization email@domain.com" />
+  <meta name="dcterms.date" content="2026-02-23" />
+  <title>Atomic AI Security Units: Configuration-Bound Security Evaluation and Governance for Tool-Using and Retrieval-Augmented LLM Systems</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    div.abstract {
+      margin: 2em 2em 2em 2em;
+      text-align: left;
+      font-size: 85%;
+    }
+    div.abstract-title {
+      font-weight: bold;
+      text-align: center;
+      padding: 0;
+      margin-bottom: 0.5em;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+      margin-bottom: 0em;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
+<style>
+
+@page { size: Letter; margin: 1in; }
+
+html { font-size: 11pt; }
+body {
+  font-family: "Times New Roman", Times, serif;
+  line-height: 1.35;
+  color: #111;
+  counter-reset: fig tbl lst;
+}
+
+h1, h2, h3 { page-break-after: avoid; }
+figure, table { page-break-inside: avoid; }
+
+/* Make pandoc's title block look closer to a paper header */
+h1.title { font-size: 18pt; margin-bottom: 0.1in; text-align: center; }
+p.author, p.date { text-align: center; margin-top: 0; margin-bottom: 0.06in; }
+
+/* Reduce excessive spacing in standalone HTML */
+p { margin: 0.08in 0; }
+ul, ol { margin: 0.08in 0 0.08in 0.25in; }
+
+/* Figures injected by this script */
+figure { counter-increment: fig; }
+.figure-diagram { margin: 0.12in auto 0.08in auto; max-width: 6.5in; }
+.figure-diagram svg { width: 100%; height: auto; display: block; }
+figcaption { font-size: 10pt; color: #333; margin-top: 6px; }
+figure > figcaption::before {
+  content: "Figure " counter(fig) ". ";
+  font-weight: 600;
+}
+
+/* Tables */
+table { counter-increment: tbl; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #ddd; padding: 6px 8px; vertical-align: top; }
+th { background: #f5f5f5; }
+table > caption::before {
+  content: "Table " counter(tbl) ". ";
+  font-weight: 600;
+}
+
+/* Code / listings */
+pre[data-caption] { counter-increment: lst; }
+pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  padding: 10px 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 9.5pt;
+}
+pre code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+pre[data-caption]::before {
+  content: "Listing " counter(lst) ". " attr(data-caption);
+  display: block;
+  margin-bottom: 6px;
+  font-style: italic;
+  color: #343a40;
+}
+
+/* Links */
+a { color: #0645ad; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Atomic AI Security Units: Configuration-Bound Security
+Evaluation and Governance for Tool-Using and Retrieval-Augmented LLM
+Systems</h1>
+<p class="author">Author Name(s)<br />
+Organization<br />
+<code>email@domain.com</code></p>
+<p class="date">February 23, 2026</p>
+<div class="abstract">
+<div class="abstract-title">Abstract</div>
+<p>Enterprise generative AI systems increasingly combine prompt
+packages, large language models (LLMs), retrieval-augmented generation
+(RAG), and tool execution (plugins, connectors, or agent toolchains).
+Security failures in these systems are rarely attributable to the base
+model in isolation; instead they arise from configuration choices and
+from emergent behavior across multi-component orchestration topologies.
+We introduce the <em>Atomic AI Security Unit</em> (<span
+class="smallcaps">AASU</span>), a formal abstraction that treats a
+specific, versioned configuration snapshot—prompt package, model
+parameters, retrieval configuration, tool interfaces, and runtime
+constraints—as the minimal unit of security evaluation, certification,
+and governance. We model deployed AI applications as directed graphs of
+<span class="smallcaps">AASU</span>s, show how threat modeling and
+testing must be bound to both node configurations and edge-level data
+flows, and propose a three-layer validation methodology (unit,
+orchestration, and attack-graph) with auditable change control via
+configuration manifests and hashes. We situate <span
+class="smallcaps">AASU</span> within prior work on prompt injection,
+indirect prompt injection benchmarks, tool-integrated agent attacks, and
+emerging testing frameworks, and we map <span
+class="smallcaps">AASU</span> components to widely used taxonomies and
+governance frameworks.</p>
+</div>
+</header>
+<h1 id="introduction">Introduction</h1>
+<p>LLM-enabled applications have moved from single-model chat interfaces
+to composite systems that integrate: (i) a prompt <em>package</em>
+(including system/developer prompts, routing prompts, and policies),
+(ii) a model instance and decoding/runtime parameters, (iii) retrieval
+layers (vector databases, corpora selection, filters, and thresholds),
+and (iv) tool execution layers that can read and write to enterprise
+systems. This composition introduces new security failure modes such as
+direct and indirect prompt injection, malicious instruction propagation
+via retrieved content, and privilege escalation through tool chaining
+and agent routing.</p>
+<p>Existing assurance practices often treat the model as the unit under
+test, while operational systems change prompts, tool schemas, retrieval
+indices, and guardrails on a much faster cadence than model upgrades.
+Recent work has shown that prompt injection attacks are practical
+against LLM-integrated applications <span class="citation"
+data-cites="DBLP:journals/corr/abs-2306-05499">(Liu et al. 2023)</span>
+and that indirect prompt injection is particularly challenging in
+real-world data-flow settings <span class="citation"
+data-cites="DBLP:journals/corr/abs-2312-14197">(Hartmann and Gurevych
+2023)</span>. Meanwhile, tool-using agents (e.g., ReAct-style
+systems <span class="citation"
+data-cites="DBLP:journals/corr/abs-2210-03629">(Yao et al. 2022)</span>
+and tool-learning approaches <span class="citation"
+data-cites="DBLP:journals/corr/abs-2302-04761">(Schick et al.
+2023)</span>) expand the attack surface from text generation to action
+execution, shifting security questions from output quality to capability
+safety and least privilege.</p>
+<h4 id="contributions.">Contributions.</h4>
+<p>This paper makes four contributions:</p>
+<ol>
+<li><p>We define the <span class="smallcaps">AASU</span> as a
+configuration-bound, versioned unit of security evaluation:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">A</mi><mi mathvariant="normal">S</mi><mi mathvariant="normal">U</mi></mrow><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathrm{AASU}= (P,M,R,T,K)</annotation></semantics></math>.</p></li>
+<li><p>We model deployed LLM applications as directed graphs of <span
+class="smallcaps">AASU</span>s and formalize node- and edge-scoped
+threat surfaces.</p></li>
+<li><p>We propose a three-layer validation methodology and coverage
+metrics suitable for enterprise assurance.</p></li>
+<li><p>We describe governance controls to make test results auditable
+and change-aware via manifests and configuration hashing.</p></li>
+</ol>
+<h1 id="background-and-related-work">Background and Related Work</h1>
+<h2 id="tool-using-and-retrieval-augmented-llm-systems">Tool-Using and
+Retrieval-Augmented LLM Systems</h2>
+<p>Tool-using paradigms such as ReAct <span class="citation"
+data-cites="DBLP:journals/corr/abs-2210-03629">(Yao et al. 2022)</span>
+and self-taught tool use (Toolformer) <span class="citation"
+data-cites="DBLP:journals/corr/abs-2302-04761">(Schick et al.
+2023)</span> enable LLMs to call external APIs, search systems, and
+enterprise services. Retrieval-augmented generation (RAG) <span
+class="citation" data-cites="DBLP:journals/corr/abs-2005-11401">(Lewis
+et al. 2020)</span> injects retrieved context into model prompts to
+improve factuality and domain grounding, but also introduces a new input
+channel for adversarial content and data exfiltration risks.</p>
+<p>As agent frameworks evolve, standardized tool interoperability layers
+(e.g., Model Context Protocol) reduce integration friction, but also
+make tool supply chains and permission surfaces more uniform and
+therefore more scalable for both defenders and attackers <span
+class="citation" data-cites="mcp_spec anthropic_mcp">(Model Context
+Protocol 2024; Anthropic 2024)</span>.</p>
+<h2 id="prompt-injection-and-indirect-prompt-injection">Prompt Injection
+and Indirect Prompt Injection</h2>
+<p>Prompt injection attacks exploit the fact that LLMs treat
+instructions in context as actionable, even when untrusted content is
+mixed with system guidance. Liu <em>et al.</em> show practical prompt
+injection attacks against LLM-integrated applications and discuss
+mitigations <span class="citation"
+data-cites="DBLP:journals/corr/abs-2306-05499">(Liu et al. 2023)</span>.
+Hartmann and Gurevych introduce BIPIA, a benchmark for <em>indirect</em>
+prompt injection, where malicious instructions arrive through external
+content such as webpages or documents <span class="citation"
+data-cites="DBLP:journals/corr/abs-2312-14197">(Hartmann and Gurevych
+2023)</span>. Recent benchmarks for tool-integrated agents, including
+InjecAgent, explicitly focus on indirect prompt injection and tool
+misuse behaviors <span class="citation" data-cites="injecagent">(Liao et
+al. 2024)</span>.</p>
+<p>Defensive approaches include structured querying and
+instruction/context separation (e.g., StruQ) <span class="citation"
+data-cites="struq">(Arocas, Lembke, and Heintz 2024)</span> and
+alignment strategies designed to be robust against injection
+(SecAlign) <span class="citation" data-cites="secalign">(Wu et al.
+2024)</span>. Design-time approaches that constrain agent capabilities
+and instruction channels (e.g., CaMeL) aim to make injection failures
+less catastrophic even when attacks succeed <span class="citation"
+data-cites="camel">(Tramèr et al. 2025)</span>. However, empirical
+results across defenses are highly configuration-dependent and can fail
+under distribution shifts in tools, corpora, or routing logic.</p>
+<h2 id="security-testing-frameworks-and-red-teaming">Security Testing
+Frameworks and Red Teaming</h2>
+<p>Security probing and red teaming for LLM systems is increasingly
+automated. Examples include garak <span class="citation"
+data-cites="garak">(Derczynski et al. 2024)</span>, PyRIT <span
+class="citation" data-cites="pyrit">(Kumar et al. 2024)</span>, and
+CyberSecEval <span class="citation" data-cites="cyberseceval">(Jiang et
+al. 2023)</span>, which provide test harnesses and datasets for
+adversarial evaluation. These systems often assume a target endpoint,
+but enterprise deployments frequently have many configuration variants
+of an application (prompt versions, tool policies, retrieval indices),
+making it difficult to bind outcomes to the correct unit of change
+without an explicit configuration abstraction.</p>
+<h2 id="governance-and-compliance-context">Governance and Compliance
+Context</h2>
+<p>Governance frameworks increasingly emphasize risk management,
+documentation, and change control for AI systems. Notable examples
+include NIST AI RMF <span class="citation"
+data-cites="nist_airmf">(National Institute of Standards and Technology
+2023)</span>, the NIST Generative AI Profile <span class="citation"
+data-cites="nist_genai_profile">(National Institute of Standards and
+Technology 2024)</span>, and emerging management system standards such
+as ISO/IEC 42001 <span class="citation"
+data-cites="iso_42001">(International Organization for Standardization
+2023)</span>. Security taxonomies such as the OWASP Top 10 for LLM
+Applications <span class="citation" data-cites="owasp_llm_top10">(OWASP
+Foundation 2023)</span> and MITRE ATLAS <span class="citation"
+data-cites="mitre_atlas">(MITRE 2020)</span> provide shared vocabulary
+for risks and techniques but do not directly prescribe how to bind tests
+and approvals to fast-changing configurations. Regulatory regimes (e.g.,
+the EU AI Act) further increase the need for traceable evidence linked
+to deployed system versions <span class="citation"
+data-cites="eu_ai_act">(European Union 2024)</span>.</p>
+<h1 id="atomic-ai-security-units">Atomic AI Security Units</h1>
+<h2 id="definition">Definition</h2>
+<p>We define an <span class="smallcaps">AASU</span> as the minimal
+configuration snapshot that must be treated as a single unit for
+security evaluation:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">A</mi><mi mathvariant="normal">S</mi><mi mathvariant="normal">U</mi></mrow><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathrm{AASU}= (P, M, R, T, K)</annotation></semantics></math>
+where:</p>
+<ul>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>
+is the prompt package (system/developer prompts, policy prompts,
+templates, routing prompts, and prompt hierarchy),</p></li>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+is the model instance and parameters (provider, model version, decoding
+settings),</p></li>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+is the retrieval configuration (corpora, embedding model, chunking,
+filters,
+top-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>,
+thresholds),</p></li>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>
+is the tool interface and execution configuration (schemas, permissions,
+allow/deny lists, connector versions, runtime sandbox),</p></li>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+is runtime constraints and guardrails (rate limits, timeouts, context
+limits, output handling constraints).</p></li>
+</ul>
+<figure id="fig:aasu">
+
+<div class="figure-diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" aria-label="AASU components diagram">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L12,4 L0,8 Z" fill="#343a40" />
+    </marker>
+  </defs>
+  <style>
+    .box { fill: #f8f9fa; stroke: #343a40; stroke-width: 1.4; }
+    .hdr { fill: #e7f5ff; stroke: #1c7ed6; stroke-width: 1.6; }
+    .t1 { font: 600 18px "Times New Roman", Times, serif; fill: #111; }
+    .t2 { font: 14px "Times New Roman", Times, serif; fill: #111; }
+    .arrow { stroke: #343a40; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+  </style>
+
+  <rect x="140" y="18" width="440" height="56" rx="10" ry="10" class="hdr"/>
+  <text x="360" y="44" text-anchor="middle" class="t1">AASU</text>
+  <text x="360" y="64" text-anchor="middle" class="t2">(versioned configuration snapshot)</text>
+
+  <rect x="140" y="98" width="440" height="36" rx="8" ry="8" class="box"/>
+  <rect x="140" y="142" width="440" height="36" rx="8" ry="8" class="box"/>
+  <rect x="140" y="186" width="440" height="36" rx="8" ry="8" class="box"/>
+  <rect x="140" y="230" width="440" height="36" rx="8" ry="8" class="box"/>
+  <rect x="140" y="274" width="440" height="36" rx="8" ry="8" class="box"/>
+
+  <text x="160" y="122" class="t2">P — Prompt package</text>
+  <text x="160" y="166" class="t2">M — Model instance &amp; parameters</text>
+  <text x="160" y="210" class="t2">R — Retrieval (RAG) configuration</text>
+  <text x="160" y="254" class="t2">T — Tools / MCP configuration</text>
+  <text x="160" y="298" class="t2">K — Runtime constraints / guardrails</text>
+
+  <path d="M360,74 L360,90" class="arrow"/>
+  <path d="M360,134 L360,138" class="arrow"/>
+  <path d="M360,178 L360,182" class="arrow"/>
+  <path d="M360,222 L360,226" class="arrow"/>
+  <path d="M360,266 L360,270" class="arrow"/>
+</svg></div>
+<figcaption>The Atomic AI Security Unit (<span
+class="smallcaps">AASU</span>) as a configuration snapshot. Any change
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo></mrow><annotation encoding="application/x-tex">P,M,R,T,</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+yields a distinct <span class="smallcaps">AASU</span> that requires
+separate assurance.</figcaption>
+</figure>
+<h2 id="configuration-snapshot-and-identity">Configuration Snapshot and
+Identity</h2>
+<p>Security posture is often <em>configuration-deterministic</em> even
+when generation outputs are probabilistic: small changes to prompts,
+tool schemas, retrieval thresholds, or guardrails can materially alter
+susceptibility to injection and misuse. Therefore, security evaluation
+must bind to a concrete configuration snapshot.</p>
+<p>We recommend representing each <span class="smallcaps">AASU</span> as
+a canonical manifest (e.g., JSON) and computing an identifier via
+cryptographic hashing:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="sans-serif">𝖠𝖠𝖲𝖴_𝖨𝖣</mtext><mo>=</mo><mi>H</mi><mo stretchy="false" form="prefix">(</mo><mtext mathvariant="sans-serif">𝖢𝖺𝗇𝗈𝗇𝗂𝖼𝖺𝗅𝖲𝖾𝗋𝗂𝖺𝗅𝗂𝗓𝖾</mtext><mo stretchy="false" form="prefix">(</mo><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\textsf{AASU\_ID} = H(\textsf{CanonicalSerialize}(P,M,R,T,K))</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>
+is a collision-resistant hash (e.g., SHA-256) applied to a deterministic
+serialization.</p>
+<h2 id="illustrative-runtime-data-flow">Illustrative Runtime Data
+Flow</h2>
+<p>Figure <a href="#fig:runtime" data-reference-type="ref"
+data-reference="fig:runtime">2</a> depicts a typical request path
+through an <span class="smallcaps">AASU</span>, highlighting the
+multiple decision points where configuration affects security
+posture.</p>
+<figure id="fig:runtime">
+
+<div class="figure-diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-label="AASU runtime flow diagram">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L12,4 L0,8 Z" fill="#343a40" />
+    </marker>
+  </defs>
+  <style>
+    .box { fill: #f8f9fa; stroke: #343a40; stroke-width: 1.4; }
+    .kbox { fill: #fff9db; stroke: #f08c00; stroke-width: 1.4; }
+    .decision { fill: #fff4e6; stroke: #e8590c; stroke-width: 1.4; }
+    .t { font: 14px "Times New Roman", Times, serif; fill: #111; }
+    .tB { font: 600 14px "Times New Roman", Times, serif; fill: #111; }
+    .arrow { stroke: #343a40; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+  </style>
+
+  <rect x="330" y="20" width="240" height="44" rx="10" ry="10" class="box"/>
+  <text x="450" y="47" text-anchor="middle" class="tB">User input</text>
+
+  <rect x="300" y="86" width="300" height="52" rx="10" ry="10" class="kbox"/>
+  <text x="450" y="112" text-anchor="middle" class="tB">K: pre-guardrails</text>
+  <text x="450" y="130" text-anchor="middle" class="t">(policy checks, limits)</text>
+
+  <polygon points="450,160 530,208 450,256 370,208" class="decision"/>
+  <text x="450" y="204" text-anchor="middle" class="tB">R enabled?</text>
+
+  <rect x="70" y="282" width="290" height="58" rx="10" ry="10" class="box"/>
+  <text x="215" y="308" text-anchor="middle" class="tB">R: retrieval</text>
+  <text x="215" y="326" text-anchor="middle" class="t">(top-k context)</text>
+
+  <rect x="320" y="282" width="260" height="70" rx="10" ry="10" class="box"/>
+  <text x="450" y="308" text-anchor="middle" class="tB">P: prompt assembly</text>
+  <text x="450" y="326" text-anchor="middle" class="t">(system + dev + user + ctx)</text>
+
+  <rect x="320" y="374" width="260" height="58" rx="10" ry="10" class="box"/>
+  <text x="450" y="400" text-anchor="middle" class="tB">M: model call</text>
+  <text x="450" y="418" text-anchor="middle" class="t">(params / decoding)</text>
+
+  <polygon points="450,448 530,486 450,524 370,486" class="decision" transform="translate(0,-40)"/>
+  <text x="450" y="450" text-anchor="middle" class="tB">Tool call?</text>
+
+  <rect x="600" y="282" width="260" height="70" rx="10" ry="10" class="box"/>
+  <text x="730" y="308" text-anchor="middle" class="tB">T: tool runtime</text>
+  <text x="730" y="326" text-anchor="middle" class="t">(permissions + sandbox)</text>
+
+  <rect x="600" y="374" width="260" height="58" rx="10" ry="10" class="kbox"/>
+  <text x="730" y="400" text-anchor="middle" class="tB">K: post-guardrails</text>
+  <text x="730" y="418" text-anchor="middle" class="t">(safe output handling)</text>
+
+  <rect x="600" y="454" width="260" height="44" rx="10" ry="10" class="box"/>
+  <text x="730" y="481" text-anchor="middle" class="tB">Response</text>
+
+  <!-- main flow arrows -->
+  <path d="M450,64 L450,86" class="arrow"/>
+  <path d="M450,138 L450,160" class="arrow"/>
+
+  <path d="M370,208 L260,208 L260,282" class="arrow"/>
+  <text x="292" y="196" class="t">yes</text>
+
+  <path d="M530,208 L660,208 L660,282" class="arrow"/>
+  <text x="602" y="196" class="t">no</text>
+
+  <path d="M360,311 L320,311" class="arrow"/>
+  <path d="M450,352 L450,374" class="arrow"/>
+  <path d="M450,432 L450,448" class="arrow"/>
+
+  <!-- tool branch -->
+  <path d="M530,446 L730,446 L730,352" class="arrow"/>
+  <text x="618" y="434" class="t">yes</text>
+
+  <path d="M450,446 L650,446 L650,374" class="arrow"/>
+  <text x="536" y="434" class="t">no</text>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+  <path d="M730,498 L730,510" class="arrow" style="opacity:0"/>
+  <path d="M730,498 L730,498" class="arrow" style="opacity:0"/>
+  <path d="M730,498 L730,498" class="arrow" style="opacity:0"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+  <path d="M730,498 L730,498" class="arrow" style="opacity:0"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+  <path d="M730,498 L730,498" class="arrow" style="opacity:0"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+  <path d="M730,498 L730,498" class="arrow" style="opacity:0"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <!-- response arrow -->
+  <path d="M730,432 L730,454" class="arrow"/>
+  <path d="M730,432 L730,454" class="arrow"/>
+  <path d="M730,432 L730,454" class="arrow"/>
+  <path d="M730,432 L730,454" class="arrow"/>
+  <path d="M730,432 L730,454" class="arrow"/>
+  <path d="M730,432 L730,454" class="arrow"/>
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <path d="M730,432 L730,454" class="arrow"/>
+
+  <!-- loop back from tool runtime to prompt assembly -->
+  <path d="M600,317 L560,317" class="arrow"/>
+  <path d="M600,317 C520,250 520,250 450,250 C380,250 380,260 380,282" class="arrow"/>
+
+  <!-- post to response -->
+  <path d="M730,432 L730,454" class="arrow"/>
+</svg></div>
+<figcaption>Illustrative runtime flow of an <span
+class="smallcaps">AASU</span>. The attack surface spans retrieval,
+prompt assembly, model inference, tool execution, and
+guardrails.</figcaption>
+</figure>
+<h1 id="systems-as-graphs-of-aasus">Systems as Graphs of <span
+class="smallcaps">AASU</span>s</h1>
+<p>Enterprise deployments often contain multiple <span
+class="smallcaps">AASU</span>s linked by orchestration and routing. We
+model an application as a directed graph
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>V</mi><mo>,</mo><mi>E</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">G=(V,E)</annotation></semantics></math>
+where each node
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mo>∈</mo><mi>V</mi></mrow><annotation encoding="application/x-tex">v\in V</annotation></semantics></math>
+is an <span class="smallcaps">AASU</span> configuration snapshot and
+each edge
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mo>∈</mo><mi>E</mi></mrow><annotation encoding="application/x-tex">e\in E</annotation></semantics></math>
+represents a data flow relationship (messages, retrieved context, tool
+output reinjection, or cross-agent state sharing).</p>
+<figure id="fig:graph">
+
+<div class="figure-diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" role="img" aria-label="Graph of AASUs diagram">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L12,4 L0,8 Z" fill="#343a40" />
+    </marker>
+  </defs>
+  <style>
+    .box { fill: #f8f9fa; stroke: #343a40; stroke-width: 1.4; }
+    .node { fill: #e7f5ff; stroke: #1c7ed6; stroke-width: 1.4; }
+    .t { font: 14px "Times New Roman", Times, serif; fill: #111; }
+    .tB { font: 600 14px "Times New Roman", Times, serif; fill: #111; }
+    .arrow { stroke: #343a40; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+  </style>
+
+  <rect x="40" y="104" width="140" height="48" rx="10" ry="10" class="box"/>
+  <text x="110" y="133" text-anchor="middle" class="tB">User</text>
+
+  <rect x="240" y="104" width="160" height="48" rx="10" ry="10" class="box"/>
+  <text x="320" y="133" text-anchor="middle" class="tB">Router</text>
+
+  <rect x="470" y="44" width="170" height="48" rx="10" ry="10" class="node"/>
+  <text x="555" y="73" text-anchor="middle" class="tB">AASU-1</text>
+
+  <rect x="470" y="164" width="170" height="48" rx="10" ry="10" class="node"/>
+  <text x="555" y="193" text-anchor="middle" class="tB">AASU-2</text>
+
+  <rect x="690" y="104" width="170" height="48" rx="10" ry="10" class="node"/>
+  <text x="775" y="133" text-anchor="middle" class="tB">AASU-3</text>
+
+  <path d="M180,128 L240,128" class="arrow"/>
+  <path d="M400,128 L470,68" class="arrow"/>
+  <path d="M400,128 L470,188" class="arrow"/>
+  <path d="M640,68 L690,128" class="arrow"/>
+  <path d="M640,188 L690,128" class="arrow"/>
+</svg></div>
+<figcaption>A directed graph of <span class="smallcaps">AASU</span>s.
+Security analysis must consider both node properties (configuration) and
+edge properties (propagation and privilege pivots).</figcaption>
+</figure>
+<h2 id="edge-scoped-risks">Edge-Scoped Risks</h2>
+<p>Even if individual nodes are robust in isolation, edge-level
+interactions can introduce vulnerabilities:</p>
+<ul>
+<li><p><strong>Injection propagation:</strong> malicious instructions
+persist across nodes in sequential chains.</p></li>
+<li><p><strong>Privilege escalation chains:</strong> lower-privilege
+nodes influence higher-privilege nodes via routing or shared
+memory.</p></li>
+<li><p><strong>Context contamination:</strong> tool outputs and
+retrieved documents are reinjected without provenance or trust
+labeling.</p></li>
+<li><p><strong>Routing manipulation:</strong> attackers steer queries
+toward weaker or more privileged <span
+class="smallcaps">AASU</span>s.</p></li>
+</ul>
+<h1 id="threat-modeling-with-aasu-components">Threat Modeling with <span
+class="smallcaps">AASU</span> Components</h1>
+<p>We recommend threat models that explicitly enumerate assets, actors,
+trust boundaries, and data flows across
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi></mrow><annotation encoding="application/x-tex">P,M,R,T,K</annotation></semantics></math>
+and across edges. This structure aligns naturally with security
+taxonomies such as OWASP Top 10 for LLM Applications <span
+class="citation" data-cites="owasp_llm_top10">(OWASP Foundation
+2023)</span> and MITRE ATLAS <span class="citation"
+data-cites="mitre_atlas">(MITRE 2020)</span>, while remaining
+configuration-aware.</p>
+<h2 id="assets-and-trust-boundaries">Assets and Trust Boundaries</h2>
+<p>Common assets include sensitive data (PII, financial, proprietary),
+retrieval corpora and indices, tool capabilities (writes, refunds,
+exports), model credentials, and session memory/state. Trust boundaries
+frequently occur between: (i) user and application, (ii) application and
+model provider, (iii) orchestrator and tool runtime, and (iv) retrieval
+layer and data stores.</p>
+<figure id="fig:trust">
+
+<div class="figure-diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 240" role="img" aria-label="Trust boundaries diagram">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L12,4 L0,8 Z" fill="#343a40" />
+    </marker>
+  </defs>
+  <style>
+    .box { fill: #f8f9fa; stroke: #343a40; stroke-width: 1.4; }
+    .svc { fill: #e7f5ff; stroke: #1c7ed6; stroke-width: 1.4; }
+    .data { fill: #ebfbee; stroke: #2f9e44; stroke-width: 1.4; }
+    .t { font: 13px "Times New Roman", Times, serif; fill: #111; }
+    .tB { font: 600 13px "Times New Roman", Times, serif; fill: #111; }
+    .arrow { stroke: #343a40; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+    .tb { font: 12px "Times New Roman", Times, serif; fill: #555; }
+  </style>
+
+  <rect x="40" y="94" width="140" height="48" rx="10" ry="10" class="box"/>
+  <text x="110" y="123" text-anchor="middle" class="tB">User</text>
+
+  <rect x="220" y="94" width="170" height="48" rx="10" ry="10" class="svc"/>
+  <text x="305" y="123" text-anchor="middle" class="tB">Application</text>
+
+  <rect x="430" y="94" width="210" height="48" rx="10" ry="10" class="svc"/>
+  <text x="535" y="123" text-anchor="middle" class="tB">Orchestrator</text>
+
+  <rect x="690" y="22" width="180" height="48" rx="10" ry="10" class="box"/>
+  <text x="780" y="51" text-anchor="middle" class="tB">Model provider</text>
+
+  <rect x="690" y="94" width="180" height="48" rx="10" ry="10" class="data"/>
+  <text x="780" y="123" text-anchor="middle" class="tB">Data stores</text>
+
+  <rect x="690" y="166" width="180" height="48" rx="10" ry="10" class="box"/>
+  <text x="780" y="195" text-anchor="middle" class="tB">Tool runtime</text>
+
+  <path d="M180,118 L220,118" class="arrow"/>
+  <text x="200" y="106" class="tb">TB1</text>
+
+  <path d="M390,118 L430,118" class="arrow"/>
+  <path d="M640,118 L690,46" class="arrow"/>
+  <text x="650" y="64" class="tb">TB2</text>
+
+  <path d="M640,118 L690,118" class="arrow"/>
+  <text x="650" y="110" class="tb">TB4</text>
+
+  <path d="M640,118 L690,190" class="arrow"/>
+  <text x="650" y="170" class="tb">TB3</text>
+</svg></div>
+<figcaption>Typical trust boundaries in tool-using, retrieval-augmented
+LLM applications. <span class="smallcaps">AASU</span>-based threat
+modeling makes these boundaries explicit and testable.</figcaption>
+</figure>
+<h2 id="aasu-component-threat-surfaces"><span
+class="smallcaps">AASU</span> Component Threat Surfaces</h2>
+<p>Table <a href="#tab:components" data-reference-type="ref"
+data-reference="tab:components">1</a> summarizes representative risks
+and control themes by <span class="smallcaps">AASU</span> component.</p>
+<div id="tab:components">
+<table style="width:94%;">
+<caption>Threat surfaces and control themes by <span
+class="smallcaps">AASU</span> component.</caption>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 43%" />
+<col style="width: 43%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Comp.</strong></th>
+<th style="text-align: left;"><strong>Representative risks</strong></th>
+<th style="text-align: left;"><strong>Control themes /
+evidence</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td
+style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math></td>
+<td style="text-align: left;">Prompt injection; system prompt leakage;
+policy drift across templates and routing prompts</td>
+<td style="text-align: left;">Prompt package versioning;
+instruction/context separation; policy tests bound to prompt hash</td>
+</tr>
+<tr>
+<td
+style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math></td>
+<td style="text-align: left;">Model/provider drift; unsafe decoding
+settings; prompt-following behavior changes</td>
+<td style="text-align: left;">Model version pinning; parameter
+constraints; repeated-trial testing and regression suites</td>
+</tr>
+<tr>
+<td
+style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math></td>
+<td style="text-align: left;">Sensitive info disclosure; retrieval
+poisoning; instruction planting in corpora</td>
+<td style="text-align: left;">Corpus allowlists; provenance labeling;
+retrieval filters; index versioning</td>
+</tr>
+<tr>
+<td
+style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math></td>
+<td style="text-align: left;">Tool misuse; privilege escalation via tool
+chaining; schema abuse</td>
+<td style="text-align: left;">Least privilege; allowlists; sandboxing;
+tool-call logging; schema versioning</td>
+</tr>
+<tr>
+<td
+style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math></td>
+<td style="text-align: left;">Unbounded consumption (DoS); weak output
+handling; guardrail bypass</td>
+<td style="text-align: left;">Rate limits/timeouts; safe output
+handling; guardrail enforcement telemetry</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="representative-abuse-cases">Representative Abuse Cases</h2>
+<p>We highlight abuse cases that are naturally expressed as <span
+class="smallcaps">AASU</span>- and edge-scoped:</p>
+<ul>
+<li><p><strong>Prompt hierarchy override:</strong> untrusted content
+attempts to supersede system/developer policies.</p></li>
+<li><p><strong>Tool misuse and parameter injection:</strong> attacker
+induces unauthorized tool calls or malicious parameters.</p></li>
+<li><p><strong>Retrieval poisoning and instruction planting:</strong>
+corpora contain adversarial instructions affecting downstream
+actions.</p></li>
+<li><p><strong>Cross-agent privilege pivot:</strong> attacker leverages
+a weaker <span class="smallcaps">AASU</span> to influence a more
+privileged <span class="smallcaps">AASU</span>.</p></li>
+</ul>
+<h2 id="mapping-to-owasp-and-mitre-taxonomies">Mapping to OWASP and
+MITRE Taxonomies</h2>
+<p>OWASP Top 10 for LLM Applications provides a widely used risk
+taxonomy <span class="citation" data-cites="owasp_llm_top10">(OWASP
+Foundation 2023)</span>. Table <a href="#tab:owasp"
+data-reference-type="ref" data-reference="tab:owasp">2</a> maps OWASP
+categories to <span class="smallcaps">AASU</span> components and
+highlights the configuration-bound nature of the exposure.</p>
+<div id="tab:owasp">
+<table style="width:92%;">
+<caption>Illustrative mapping of OWASP Top 10 LLM risks to <span
+class="smallcaps">AASU</span> components.</caption>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 34%" />
+<col style="width: 44%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>OWASP ID</strong></th>
+<th style="text-align: left;"><strong>Typical <span
+class="smallcaps">AASU</span> components</strong></th>
+<th style="text-align: left;"><strong>Configuration-bound exposure
+examples</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">LLM01 Prompt Injection</td>
+<td
+style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi></mrow><annotation encoding="application/x-tex">P,R,T</annotation></semantics></math></td>
+<td style="text-align: left;">Prompt templates; untrusted retrieval
+channels; tool-call policies</td>
+</tr>
+<tr>
+<td style="text-align: left;">LLM02 Insecure Output Handling</td>
+<td
+style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math></td>
+<td style="text-align: left;">Downstream actioning of text; missing
+output validation/sanitization</td>
+</tr>
+<tr>
+<td style="text-align: left;">LLM06 Sensitive Info Disclosure</td>
+<td
+style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>K</mi></mrow><annotation encoding="application/x-tex">P,R,K</annotation></semantics></math></td>
+<td style="text-align: left;">Over-broad retrieval; weak data
+minimization; unsafe logging</td>
+</tr>
+<tr>
+<td style="text-align: left;">LLM07 Insecure Plugin Design</td>
+<td
+style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math></td>
+<td style="text-align: left;">Over-privileged tools; ambiguous schemas;
+unsafe defaults</td>
+</tr>
+<tr>
+<td style="text-align: left;">LLM08 Excessive Agency</td>
+<td
+style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mo>,</mo><mi>K</mi></mrow><annotation encoding="application/x-tex">T,K</annotation></semantics></math></td>
+<td style="text-align: left;">Unbounded tool autonomy; missing approvals
+and rate limiting</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>MITRE ATLAS catalogs adversarial AI tactics and techniques <span
+class="citation" data-cites="mitre_atlas">(MITRE 2020)</span>. In <span
+class="smallcaps">AASU</span> terms, many technique families can be
+localized to one or more of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi></mrow><annotation encoding="application/x-tex">P,M,R,T,K</annotation></semantics></math>
+and to graph edges (e.g., persistence via memory, lateral movement via
+cross-agent pivots), enabling consistent evidence collection across red
+team exercises and audits.</p>
+<h1 id="three-layer-validation-methodology">Three-Layer Validation
+Methodology</h1>
+<p>We propose a three-layer validation model intended to be
+implementable with existing test harnesses and compatible with
+enterprise governance.</p>
+<figure id="fig:layers">
+
+<div class="figure-diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" role="img" aria-label="Three-layer validation diagram">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L12,4 L0,8 Z" fill="#343a40" />
+    </marker>
+  </defs>
+  <style>
+    .box { fill: #f8f9fa; stroke: #343a40; stroke-width: 1.4; }
+    .tB { font: 600 14px "Times New Roman", Times, serif; fill: #111; }
+    .t { font: 13px "Times New Roman", Times, serif; fill: #111; }
+    .arrow { stroke: #343a40; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+  </style>
+
+  <rect x="70" y="22" width="760" height="50" rx="10" ry="10" class="box"/>
+  <text x="450" y="43" text-anchor="middle" class="tB">Layer 1 — AASU-level testing</text>
+  <text x="450" y="61" text-anchor="middle" class="t">(nodes / configuration snapshots)</text>
+
+  <rect x="70" y="86" width="760" height="50" rx="10" ry="10" class="box"/>
+  <text x="450" y="107" text-anchor="middle" class="tB">Layer 2 — Orchestration testing</text>
+  <text x="450" y="125" text-anchor="middle" class="t">(edges / propagation / routing)</text>
+
+  <rect x="70" y="150" width="760" height="50" rx="10" ry="10" class="box"/>
+  <text x="450" y="171" text-anchor="middle" class="tB">Layer 3 — Attack-graph testing</text>
+  <text x="450" y="189" text-anchor="middle" class="t">(paths / topology / privilege pivots)</text>
+
+  <path d="M450,72 L450,86" class="arrow"/>
+  <path d="M450,136 L450,150" class="arrow"/>
+</svg></div>
+<figcaption>Three-layer validation. Unit robustness is necessary but
+insufficient; orchestration and topology must also be
+tested.</figcaption>
+</figure>
+<h2 id="layer-1-aasu-level-testing">Layer 1: <span
+class="smallcaps">AASU</span>-Level Testing</h2>
+<p>Layer 1 treats each node as a configuration-bound unit and tests:
+prompt injection resistance, tool misuse simulation, retrieval leakage
+validation, unsafe output handling, and robustness under obfuscation or
+multilingual bypass attempts. Tools such as garak <span class="citation"
+data-cites="garak">(Derczynski et al. 2024)</span> and PyRIT <span
+class="citation" data-cites="pyrit">(Kumar et al. 2024)</span> can be
+used as harnesses, but their results should be recorded against a
+specific <span class="smallcaps">AASU</span>_ID.</p>
+<h2 id="layer-2-orchestration-testing">Layer 2: Orchestration
+Testing</h2>
+<p>Layer 2 tests edge-level behavior: propagation of injections across
+nodes, retry-path exploitation, memory/state poisoning, and routing
+manipulation. This layer is essential for sequential and parallel agent
+fabrics (Figure <a href="#fig:graph" data-reference-type="ref"
+data-reference="fig:graph">3</a>).</p>
+<h2 id="layer-3-attack-graph-testing">Layer 3: Attack-Graph Testing</h2>
+<p>Layer 3 evaluates end-to-end attack paths, focusing on privilege
+escalation chains, cross-<span class="smallcaps">AASU</span>
+exfiltration, and recursive tool invocation. Benchmarks such as
+InjecAgent <span class="citation" data-cites="injecagent">(Liao et al.
+2024)</span> are relevant, but enterprise deployments require
+topology-specific scenarios.</p>
+<h2 id="coverage-metrics">Coverage Metrics</h2>
+<p>We recommend reporting coverage across both nodes and edges. For a
+deployed graph
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>V</mi><mo>,</mo><mi>E</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">G=(V,E)</annotation></semantics></math>,
+let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mi>t</mi></msub><mo>⊆</mo><mi>V</mi></mrow><annotation encoding="application/x-tex">V_t\subseteq V</annotation></semantics></math>
+be tested <span class="smallcaps">AASU</span>s and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mi>t</mi></msub><mo>⊆</mo><mi>E</mi></mrow><annotation encoding="application/x-tex">E_t\subseteq E</annotation></semantics></math>
+tested edges. Define node and edge coverage:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mi>V</mi></msub><mo>=</mo><mfrac><mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>V</mi><mi>t</mi></msub><mo stretchy="false" form="prefix">|</mo></mrow><mrow><mo stretchy="false" form="prefix">|</mo><mi>V</mi><mo stretchy="false" form="prefix">|</mo></mrow></mfrac><mo>,</mo><mspace width="1.0em"></mspace><msub><mi>C</mi><mi>E</mi></msub><mo>=</mo><mfrac><mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>E</mi><mi>t</mi></msub><mo stretchy="false" form="prefix">|</mo></mrow><mrow><mo stretchy="false" form="prefix">|</mo><mi>E</mi><mo stretchy="false" form="prefix">|</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">C_V = \frac{|V_t|}{|V|}, \quad
+  C_E = \frac{|E_t|}{|E|}</annotation></semantics></math> Path coverage
+can be tracked over selected critical paths (e.g., those that cross
+trust boundaries or increase tool privileges).</p>
+<h1 id="governance-and-auditability">Governance and Auditability</h1>
+<p>The core governance requirement is that assurance outcomes are
+<em>version-bound</em> and <em>change-aware</em>. NIST AI RMF emphasizes
+risk management as an ongoing process rather than a one-time
+certification <span class="citation" data-cites="nist_airmf">(National
+Institute of Standards and Technology 2023)</span>. <span
+class="smallcaps">AASU</span> operationalizes this principle by binding
+tests and approvals to a configuration snapshot and requiring
+re-evaluation on change. At the artifact level, <span
+class="smallcaps">AASU</span> manifests complement established
+documentation practices such as model cards and datasheets by extending
+them from component-level reporting to system-level, deployment-specific
+configuration snapshots <span class="citation"
+data-cites="model_cards datasheets">(Mitchell et al. 2019; Gebru et al.
+2018)</span>.</p>
+<h2 id="lifecycle">Lifecycle</h2>
+<p>We recommend the lifecycle in Figure <a href="#fig:lifecycle"
+data-reference-type="ref" data-reference="fig:lifecycle">6</a>:
+define/update configuration, generate a manifest, compute <span
+class="smallcaps">AASU</span>_ID, run layered tests, perform risk
+review, deploy the certified snapshot, monitor and retain evidence, and
+trigger recertification on any change to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi></mrow><annotation encoding="application/x-tex">P,M,R,T,K</annotation></semantics></math>
+or key dependencies.</p>
+<figure id="fig:lifecycle">
+
+<div class="figure-diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 240" role="img" aria-label="Governance lifecycle diagram">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L12,4 L0,8 Z" fill="#343a40" />
+    </marker>
+  </defs>
+  <style>
+    .box { fill: #f8f9fa; stroke: #343a40; stroke-width: 1.4; }
+    .tB { font: 600 12.5px "Times New Roman", Times, serif; fill: #111; }
+    .arrow { stroke: #343a40; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+    .lbl { font: 12px "Times New Roman", Times, serif; fill: #555; }
+  </style>
+
+  <rect x="30" y="86" width="130" height="54" rx="10" ry="10" class="box"/>
+  <text x="95" y="110" text-anchor="middle" class="tB">Define / update</text>
+  <text x="95" y="128" text-anchor="middle" class="tB">P,M,R,T,K</text>
+
+  <rect x="180" y="86" width="130" height="54" rx="10" ry="10" class="box"/>
+  <text x="245" y="110" text-anchor="middle" class="tB">Generate</text>
+  <text x="245" y="128" text-anchor="middle" class="tB">manifest</text>
+
+  <rect x="330" y="86" width="130" height="54" rx="10" ry="10" class="box"/>
+  <text x="395" y="110" text-anchor="middle" class="tB">Compute</text>
+  <text x="395" y="128" text-anchor="middle" class="tB">AASU_ID</text>
+
+  <rect x="480" y="86" width="130" height="54" rx="10" ry="10" class="box"/>
+  <text x="545" y="110" text-anchor="middle" class="tB">Run layered</text>
+  <text x="545" y="128" text-anchor="middle" class="tB">tests</text>
+
+  <rect x="630" y="86" width="130" height="54" rx="10" ry="10" class="box"/>
+  <text x="695" y="110" text-anchor="middle" class="tB">Risk review</text>
+  <text x="695" y="128" text-anchor="middle" class="tB">&amp; sign-off</text>
+
+  <rect x="780" y="86" width="130" height="54" rx="10" ry="10" class="box"/>
+  <text x="845" y="110" text-anchor="middle" class="tB">Deploy</text>
+  <text x="845" y="128" text-anchor="middle" class="tB">snapshot</text>
+
+  <rect x="930" y="86" width="20" height="54" rx="10" ry="10" class="box" opacity="0"/>
+
+  <rect x="780" y="168" width="130" height="54" rx="10" ry="10" class="box"/>
+  <text x="845" y="192" text-anchor="middle" class="tB">Monitor</text>
+  <text x="845" y="210" text-anchor="middle" class="tB">&amp; evidence</text>
+
+  <path d="M160,113 L180,113" class="arrow"/>
+  <path d="M310,113 L330,113" class="arrow"/>
+  <path d="M460,113 L480,113" class="arrow"/>
+  <path d="M610,113 L630,113" class="arrow"/>
+  <path d="M760,113 L780,113" class="arrow"/>
+
+  <path d="M845,140 L845,168" class="arrow"/>
+
+  <path d="M780,195 C540,235 250,235 95,140" class="arrow"/>
+  <text x="460" y="232" text-anchor="middle" class="lbl">change</text>
+</svg></div>
+<figcaption>Governance lifecycle for <span
+class="smallcaps">AASU</span>-based assurance. Any change to the
+configuration snapshot triggers re-evaluation and evidence retention
+supports audit readiness.</figcaption>
+</figure>
+<h2 id="example-manifest-illustrative">Example Manifest
+(Illustrative)</h2>
+<p>The manifest below shows a minimal sketch; in practice, this should
+also reference tool permission models, connector versions, and retrieval
+corpus identifiers.</p>
+<pre id="lst:manifest"
+data-caption="Illustrative AASU manifest skeleton (JSON)."
+data-label="lst:manifest"><code>{
+  &quot;prompt_package&quot;: { &quot;id&quot;: &quot;P-2026-02-23-001&quot;, &quot;hash&quot;: &quot;...&quot; },
+  &quot;model&quot;: { &quot;provider&quot;: &quot;...&quot;, &quot;name&quot;: &quot;...&quot;, &quot;version&quot;: &quot;...&quot;, &quot;params&quot;: { &quot;temperature&quot;: 0.2 } },
+  &quot;retrieval&quot;: { &quot;enabled&quot;: true, &quot;corpus_ids&quot;: [&quot;KB-legal-v3&quot;], &quot;top_k&quot;: 8, &quot;filters&quot;: [&quot;...&quot;] },
+  &quot;tools&quot;: { &quot;enabled&quot;: true, &quot;allowlist&quot;: [&quot;search&quot;, &quot;ticket_create&quot;], &quot;schemas_hash&quot;: &quot;...&quot; },
+  &quot;constraints&quot;: { &quot;max_tokens&quot;: 2048, &quot;timeouts_ms&quot;: 10000, &quot;rate_limit_rps&quot;: 2 }
+}</code></pre>
+<h1 id="discussion-and-limitations">Discussion and Limitations</h1>
+<h4 id="nondeterminism-and-reproducibility.">Nondeterminism and
+reproducibility.</h4>
+<p>LLM outputs are stochastic; therefore, security evaluation should
+include repeated trials and adversarial search. However, <span
+class="smallcaps">AASU</span> identity is still well-defined because it
+is derived from configuration, not from outputs.</p>
+<h4 id="supply-chain-and-drift.">Supply chain and drift.</h4>
+<p>Even with a stable configuration, upstream dependencies (model
+provider updates, embedding model changes, vector index rebuilds) can
+alter behavior. <span class="smallcaps">AASU</span> governance should
+treat these as changes to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+and trigger re-evaluation.</p>
+<h4 id="empirical-evaluation.">Empirical evaluation.</h4>
+<p>This paper focuses on formalization and governance. Future work
+should implement <span class="smallcaps">AASU</span> manifests and
+coverage metrics in real enterprise pipelines and quantify improvements
+in defect localization and auditability.</p>
+<h1 id="conclusion">Conclusion</h1>
+<p>We introduced the Atomic AI Security Unit (<span
+class="smallcaps">AASU</span>) as a configuration-bound unit for
+security evaluation and governance of modern LLM applications that use
+tools and retrieval. By modeling deployed systems as graphs of <span
+class="smallcaps">AASU</span>s and requiring layered validation across
+nodes, edges, and paths, <span class="smallcaps">AASU</span> provides a
+practical foundation for repeatable red teaming, change-aware
+certification, and audit-ready evidence in enterprise GenAI systems.</p>
+<h1 id="references">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent"
+data-entry-spacing="0" role="list">
+<div id="ref-anthropic_mcp" class="csl-entry" role="listitem">
+Anthropic. 2024. <span>“Model Context Protocol
+(<span>MCP</span>).”</span> Documentation. <a
+href="https://docs.anthropic.com/en/docs/agents-and-tools/mcp">https://docs.anthropic.com/en/docs/agents-and-tools/mcp</a>.
+</div>
+<div id="ref-struq" class="csl-entry" role="listitem">
+Arocas, Stéphane, Thomas I. L. Lembke, and Fredrik Heintz. 2024.
+<span>“StruQ: Defending Against Prompt Injection with Structured
+Queries.”</span> <em>CoRR</em> abs/2402.06363. <a
+href="https://doi.org/10.48550/ARXIV.2402.06363">https://doi.org/10.48550/ARXIV.2402.06363</a>.
+</div>
+<div id="ref-garak" class="csl-entry" role="listitem">
+Derczynski, Leon, Erick Galinkin, Jeffrey Martin, Subho Majumdar, and
+Nanna Inie. 2024. <span>“Garak: A Framework for Security Probing Large
+Language Models.”</span> arXiv:2406.11036. <a
+href="https://doi.org/10.48550/arXiv.2406.11036">https://doi.org/10.48550/arXiv.2406.11036</a>.
+</div>
+<div id="ref-eu_ai_act" class="csl-entry" role="listitem">
+European Union. 2024. <span>“Regulation (<span>EU</span>) 2024/1689 of
+the European Parliament and of the Council (Artificial Intelligence
+Act).”</span> Official Journal of the European Union. <a
+href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng">https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng</a>.
+</div>
+<div id="ref-datasheets" class="csl-entry" role="listitem">
+Gebru, Timnit, Jamie Morgenstern, Briana Vecchione, Jennifer Wortman
+Vaughan, Hanna Wallach, Hal Daumé III, and Kate Crawford. 2018.
+<span>“Datasheets for Datasets.”</span> <em>CoRR</em> abs/1803.09010. <a
+href="https://doi.org/10.48550/ARXIV.1803.09010">https://doi.org/10.48550/ARXIV.1803.09010</a>.
+</div>
+<div id="ref-DBLP:journals/corr/abs-2312-14197" class="csl-entry"
+role="listitem">
+Hartmann, Lukas P., and Iryna Gurevych. 2023. <span>“<span>BIPIA</span>:
+A Benchmark for Evaluating the Robustness of <span>LLM</span>s Against
+Indirect Prompt Injection Attacks.”</span> <em>CoRR</em> abs/2312.14197.
+<a
+href="https://doi.org/10.48550/ARXIV.2312.14197">https://doi.org/10.48550/ARXIV.2312.14197</a>.
+</div>
+<div id="ref-iso_42001" class="csl-entry" role="listitem">
+International Organization for Standardization. 2023.
+<span>“<span>ISO/IEC</span> 42001: Artificial Intelligence — Management
+System.”</span> ISO/IEC Standard. <a
+href="https://www.iso.org/standard/81230.html">https://www.iso.org/standard/81230.html</a>.
+</div>
+<div id="ref-cyberseceval" class="csl-entry" role="listitem">
+Jiang, Yue, Dengpan Ye, Shaonan Wang, Ziyang Pan, Yi Ren, Tianshuo
+Zhang, Tianyi Tang, et al. 2023. <span>“CyberSecEval: A Comprehensive
+Security Benchmark for Large Language Models.”</span> <em>CoRR</em>
+abs/2312.04724. <a
+href="https://doi.org/10.48550/ARXIV.2312.04724">https://doi.org/10.48550/ARXIV.2312.04724</a>.
+</div>
+<div id="ref-pyrit" class="csl-entry" role="listitem">
+Kumar, Ram Shankar Siva, David Valentin, Payton Boyd, Todd Maxwell,
+Wayne Blanchard, Aidan P. Naik, Daehoon Bae, et al. 2024.
+<span>“<span>PyRIT</span>: A Tool for Finding Security Risks of
+Generative <span>AI</span> in the Wild.”</span> <em>CoRR</em>
+abs/2410.02828. <a
+href="https://doi.org/10.48550/ARXIV.2410.02828">https://doi.org/10.48550/ARXIV.2410.02828</a>.
+</div>
+<div id="ref-DBLP:journals/corr/abs-2005-11401" class="csl-entry"
+role="listitem">
+Lewis, Patrick, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir
+Karpukhin, Naman Goyal, Heinrich Küttler, et al. 2020.
+<span>“Retrieval-Augmented Generation for Knowledge-Intensive
+<span>NLP</span> Tasks.”</span> <em>CoRR</em> abs/2005.11401. <a
+href="https://doi.org/10.48550/ARXIV.2005.11401">https://doi.org/10.48550/ARXIV.2005.11401</a>.
+</div>
+<div id="ref-injecagent" class="csl-entry" role="listitem">
+Liao, Junjie, Bingjun Wang, Alan Y. Shih, Huan Sun, and Kamalika
+Chaudhuri. 2024. <span>“InjecAgent: Benchmarking Indirect Prompt
+Injections in Tool-Integrated Large Language Model Agents.”</span>
+<em>CoRR</em> abs/2403.02691. <a
+href="https://doi.org/10.48550/ARXIV.2403.02691">https://doi.org/10.48550/ARXIV.2403.02691</a>.
+</div>
+<div id="ref-DBLP:journals/corr/abs-2306-05499" class="csl-entry"
+role="listitem">
+Liu, Yi, Hanwen Chen, Xiaojun Jia, Yang Yang, and Han Yu. 2023.
+<span>“Prompt Injection Attacks Against <span>LLM</span>-Integrated
+Applications.”</span> <em>CoRR</em> abs/2306.05499. <a
+href="https://doi.org/10.48550/ARXIV.2306.05499">https://doi.org/10.48550/ARXIV.2306.05499</a>.
+</div>
+<div id="ref-model_cards" class="csl-entry" role="listitem">
+Mitchell, Margaret, Simone Wu, Andrew Zaldivar, Parker Barnes, Lucy
+Vasserman, Ben Hutchinson, Elena Spitzer, Inioluwa Deborah Raji, and
+Timnit Gebru. 2019. <span>“Model Cards for Model Reporting.”</span>
+<em>Proceedings of the Conference on Fairness, Accountability, and
+Transparency</em>. <a
+href="https://doi.org/10.48550/ARXIV.1810.03993">https://doi.org/10.48550/ARXIV.1810.03993</a>.
+</div>
+<div id="ref-mitre_atlas" class="csl-entry" role="listitem">
+MITRE. 2020. <span>“<span>ATLAS</span>: Adversarial Threat Landscape for
+Artificial-Intelligence Systems.”</span> MITRE. <a
+href="https://atlas.mitre.org/">https://atlas.mitre.org/</a>.
+</div>
+<div id="ref-mcp_spec" class="csl-entry" role="listitem">
+Model Context Protocol. 2024. <span>“Model Context Protocol
+Specification.”</span> GitHub repository. <a
+href="https://github.com/modelcontextprotocol/specification">https://github.com/modelcontextprotocol/specification</a>.
+</div>
+<div id="ref-nist_airmf" class="csl-entry" role="listitem">
+National Institute of Standards and Technology. 2023.
+<span>“<span>AI</span> Risk Management Framework 1.0.”</span> NIST. <a
+href="https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf">https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf</a>.
+</div>
+<div id="ref-nist_genai_profile" class="csl-entry" role="listitem">
+———. 2024. <span>“Artificial Intelligence Risk Management Framework:
+Generative <span>AI</span> Profile.”</span> NIST. <a
+href="https://doi.org/10.6028/NIST.AI.600-1">https://doi.org/10.6028/NIST.AI.600-1</a>.
+</div>
+<div id="ref-owasp_llm_top10" class="csl-entry" role="listitem">
+OWASP Foundation. 2023. <span>“<span>OWASP</span> Top 10 for
+<span>LLM</span> Applications.”</span> OWASP. <a
+href="https://owasp.org/www-project-top-10-for-large-language-model-applications/">https://owasp.org/www-project-top-10-for-large-language-model-applications/</a>.
+</div>
+<div id="ref-DBLP:journals/corr/abs-2302-04761" class="csl-entry"
+role="listitem">
+Schick, Timo, Jane Dwivedi-Yu, Roberto Dessı̀, Roberta Raileanu, Maria
+Lomeli, Luke Zettlemoyer, Nicola Cancedda, and Thomas Scialom. 2023.
+<span>“Toolformer: Language Models Can Teach Themselves to Use
+Tools.”</span> <em>CoRR</em> abs/2302.04761. <a
+href="https://doi.org/10.48550/ARXIV.2302.04761">https://doi.org/10.48550/ARXIV.2302.04761</a>.
+</div>
+<div id="ref-camel" class="csl-entry" role="listitem">
+Tramèr, Florian, Bo Li, Gautam Kamath, and Dan Boneh. 2025.
+<span>“Defeating Prompt Injections by Design.”</span> <em>CoRR</em>
+abs/2503.18813. <a
+href="https://doi.org/10.48550/ARXIV.2503.18813">https://doi.org/10.48550/ARXIV.2503.18813</a>.
+</div>
+<div id="ref-secalign" class="csl-entry" role="listitem">
+Wu, Zhipeng, Xiaoyang Zhang, Zicheng Xu, Qingkai Zeng, Dan Shen, Siyuan
+Cheng, Guo Chen, Yufei Zhang, and Xusheng Xiao. 2024. <span>“Aligning
+<span>LLM</span>s to Be Robust Against Prompt Injection.”</span>
+<em>CoRR</em> abs/2410.05451. <a
+href="https://doi.org/10.48550/ARXIV.2410.05451">https://doi.org/10.48550/ARXIV.2410.05451</a>.
+</div>
+<div id="ref-DBLP:journals/corr/abs-2210-03629" class="csl-entry"
+role="listitem">
+Yao, Shunyu, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik
+Narasimhan, and Yuan Cao. 2022. <span>“<span>ReAct</span>: Synergizing
+Reasoning and Acting in Language Models.”</span> <em>CoRR</em>
+abs/2210.03629. <a
+href="https://doi.org/10.48550/ARXIV.2210.03629">https://doi.org/10.48550/ARXIV.2210.03629</a>.
+</div>
+</div>
+</body>
+</html>

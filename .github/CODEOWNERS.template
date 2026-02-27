@@ -1,0 +1,10 @@
+# Rename to .github/CODEOWNERS and replace placeholders with real GitHub users/teams.
+#
+# Tip: If you enable "Require review from Code Owners" in branch protection, make sure
+# every path that matters has *valid* owners, otherwise PRs may become unmergeable.
+
+/registry/assets/aasu/        @YOUR-ORG/appsec @YOUR-ORG/product-ai
+/registry/assets/tool/        @YOUR-ORG/appsec @YOUR-ORG/platform
+/registry/assets/retrieval/   @YOUR-ORG/appsec @YOUR-ORG/data-platform
+/registry/schemas/            @YOUR-ORG/appsec
+/tools/                       @YOUR-ORG/appsec

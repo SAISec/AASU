@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+title: Atomic AI Security Unit (AASU)
+message: "If you use this work, please cite it."
+type: software
+authors:
+  - name: AASU Contributors
+repository-code: https://github.com/SAISec/AASU
+license: Apache-2.0
+

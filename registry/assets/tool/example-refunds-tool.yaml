@@ -1,0 +1,21 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:tool:mcp:refunds
+  name: MCP Tool (Refunds)
+  owners:
+    - type: team
+      id: payments-platform
+      role: primary
+spec:
+  type: tool
+  lifecycle: active
+  tool:
+    protocol: mcp
+    permissions:
+      - refunds:create
+      - refunds:read
+    runtime:
+      kind: container
+      image: ghcr.io/acme/mcp-refunds@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
