@@ -15,8 +15,8 @@ This site provides a landing page for the AASU project.
 - White paper (HTML): [`paper/main.html`](paper/main.html)
 - White paper (PDF): [`paper/main.pdf`](paper/main.pdf)
 - Consolidated white paper (Markdown): [`../AASU_White_Paper_Consolidated_v2_2.md`](../AASU_White_Paper_Consolidated_v2_2.md)
+- Consolidated white paper implementation update: skills + short/long-term memory + graph context + AIBOM/attestations (2026-02-28)
 - White paper archive: [`whitepapers/index.md`](whitepapers/index.md)
 - Git-CMDB protocol (AGCVCP): [`protocol.md`](protocol.md)
 - Registry + tooling: [`registry.md`](registry.md)
  
-

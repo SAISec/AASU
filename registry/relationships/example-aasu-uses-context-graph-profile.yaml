@@ -1,0 +1,9 @@
+apiVersion: aasu.ai/v1alpha1
+kind: Relationship
+metadata:
+  id: rel:ci:aasu:customer-support-chatbot:prod:uses_context_graph_profile:customer-support
+spec:
+  type: uses_context_graph_profile
+  from: ci:aasu:customer-support-chatbot:prod
+  to: ci:context_graph_profile:customer-support:prod:v1
+

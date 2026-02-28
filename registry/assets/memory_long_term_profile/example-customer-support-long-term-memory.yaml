@@ -1,0 +1,27 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:memory_long_term_profile:customer-support:tenant:v1
+  name: Long-Term Memory Profile (Customer Support Tenant) v1
+  owners:
+    - type: team
+      id: product-ai
+      role: primary
+    - type: team
+      id: data-platform
+      role: operations
+    - type: team
+      id: appsec
+      role: security
+spec:
+  type: memory_long_term_profile
+  lifecycle: active
+  environment: prod
+  memory:
+    namespace: tenant-and-user
+    retention_days: 365
+    legal_hold_supported: true
+    consent_mode: explicit-opt-in
+    erase_sla_days: 30
+    write_policy: allow-approved-facts-only
+

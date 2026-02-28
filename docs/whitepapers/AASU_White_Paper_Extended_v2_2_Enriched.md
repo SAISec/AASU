@@ -9,6 +9,7 @@
 **Document ID:** AASU-WP-2.2\
 **Version:** 2.2 (Highly Enriched Edition)\
 **Date:** 2026-02-23\
+**Implementation Revision Note:** 2026-02-28 (v1alpha2 registry/governance extensions)\
 **Intended Audience:**\
 CISO \| AI Security Engineering \| Red Team \| ML Platform \| Risk & GRC
 \| Enterprise Architecture \| Regulators
@@ -40,6 +41,7 @@ and expands it into:
 -   Governance & compliance model\
 -   Coverage metrics framework\
 -   Enterprise operating model
+-   Skills, short/long-term memory, graph-context, AIBOM and attestation governance profile
 
 ------------------------------------------------------------------------
 
@@ -145,6 +147,17 @@ flowchart TD
 
 The AASU framework enables topology-aware, configuration-bound,
 graph-based assurance for enterprise AI systems.
+
+For operational implementation in regulated environments, the current
+profile adds:
+
+-   Skills as separate `skill_package` assets
+-   Distinct short-term and long-term memory profiles
+-   Knowledge graph (durable) and context graph profile (runtime)
+-   AIBOM and attestation assets linked through relationship controls
+
+These controls preserve the core AASU tuple while materially improving
+change governance, auditability, and policy enforcement.
 
 ------------------------------------------------------------------------
 

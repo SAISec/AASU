@@ -7,6 +7,7 @@
 **Document ID:** AASU-WP-2.2-CONSOLIDATED  
 **Version:** 2.2 (Consolidated from v1.0, v1.2, and v2.2)  
 **Date:** 2026-02-23  
+**Implementation Revision Note:** 2026-02-28 (v1alpha2 registry/governance extensions)  
 **Intended Audience:** CISO \| AI Security Engineering \| Red Team \| AppSec \| ML Platform \| Risk & GRC \| Enterprise Architecture \| Audit/Regulators  
 **Classification:** Public / External Distribution Ready
 
@@ -27,7 +28,7 @@ This paper formalizes a security abstraction for repeatable testing and governan
 
 > **Atomic AI Security Unit (AASU)** — the smallest configuration-bound AI system instance that must be treated as a single unit for security testing, red teaming, and audit validation.
 
-It further defines architecture-aware testing patterns, a three-layer validation methodology (unit → orchestration → attack-graph), and mappings to common AI security taxonomies (OWASP and MITRE ATLAS).
+It further defines architecture-aware testing patterns, a three-layer validation methodology (unit → orchestration → attack-graph), mappings to common AI security taxonomies (OWASP and MITRE ATLAS), and implementation extensions for skills, memory, graph context, AIBOM, and attestations.
 
 ---
 
@@ -371,6 +372,43 @@ Each AASU should maintain, at minimum:
 - Traceable certification statements tied to specific AASU IDs
 - Risk acceptance tied to explicit configuration snapshots (not “the chatbot in general”)
 
+### 6.3 Implementation Profile Update (2026-02-28): Skills, Memory, Graph Context, AIBOM, and Attestations
+
+For operational governance in regulated environments, this implementation profile adds first-class assets and relationship controls while preserving the core AASU tuple `(P,M,R,T,K)`.
+
+**Design principles:**
+- Keep AASU core unchanged for conceptual stability.
+- Treat skills as **separate assets**, not inline prompt/memory text.
+- Split memory into distinct **short-term** and **long-term** profiles.
+- Distinguish durable **knowledge graph** from runtime **context graph profile**.
+- Attach model inventory and supply-chain evidence through **AIBOM** and **attestation bundles**.
+
+**Required relationship controls (production profile):**
+- Every AASU references exactly one short-term memory profile.
+- Every production AASU references exactly one long-term memory profile.
+- If context graph profile is used, a knowledge graph reference is mandatory.
+- Production AASUs require attestation linkage and model AIBOM linkage.
+
+**Representative CI classes:**
+- `skill_package`
+- `memory_short_term_profile`
+- `memory_long_term_profile`
+- `knowledge_graph`
+- `context_graph_profile`
+- `aibom_document`
+- `attestation_bundle`
+
+**Representative relationships:**
+- `uses_skill`
+- `uses_short_term_memory`
+- `uses_long_term_memory`
+- `uses_knowledge_graph`
+- `uses_context_graph_profile`
+- `context_graph_derived_from`
+- `stores_memory_in`
+- `indexes_from_corpus`
+- `attests`
+
 ---
 
 ## 7. Standards and Technique Alignment (OWASP + MITRE ATLAS)
@@ -416,7 +454,7 @@ Taxonomies evolve. The mappings below reflect the referenced versions used in th
 | ASI03 | Identity & Privilege Abuse | T |
 | ASI04 | Agentic Supply Chain | MCP / tool ecosystem |
 | ASI05 | Unexpected Code Execution | Tool runtime |
-| ASI06 | Memory Poisoning | R |
+| ASI06 | Memory Poisoning | Short-term/Long-term Memory Profiles, Context Graph |
 | ASI07 | Inter-Agent Insecurity | Routing |
 | ASI08 | Cascading Failures | Sequential chains |
 | ASI09 | Human-Agent Trust Exploitation | UX |
@@ -444,6 +482,8 @@ Taxonomies evolve. The mappings below reflect the referenced versions used in th
 **AASU = (P, M, R, T, K)**
 
 **AI System = Directed Graph of AASUs**
+
+**Governance Extension Assets = {Skills, Short-Term Memory, Long-Term Memory, Knowledge Graph, Context Graph Profile, AIBOM, Attestations}**
 
 **Security Risk = f(Configuration, Topology, Privilege Edges, Routing Logic)**
 

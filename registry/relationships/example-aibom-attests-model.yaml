@@ -1,0 +1,9 @@
+apiVersion: aasu.ai/v1alpha1
+kind: Relationship
+metadata:
+  id: rel:ci:aibom_document:model:openai:gpt-4o:2026-02-20:attests:model
+spec:
+  type: attests
+  from: ci:aibom_document:model:openai:gpt-4o:2026-02-20
+  to: ci:model:provider:openai:gpt-4o
+

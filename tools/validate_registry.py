@@ -49,6 +49,14 @@ def error(msg: str) -> None:
     print(f"ERROR: {msg}", file=sys.stderr)
 
 
+def _asset_type(obj: dict[str, Any]) -> str | None:
+    spec = obj.get("spec")
+    if not isinstance(spec, dict):
+        return None
+    typ = spec.get("type")
+    return typ if isinstance(typ, str) else None
+
+
 def validate_registry_dir(registry_dir: Path) -> int:
     registry_dir = registry_dir.resolve()
     schemas_dir = registry_dir / "schemas"
@@ -75,7 +83,9 @@ def validate_registry_dir(registry_dir: Path) -> int:
         manifests.append((path, obj))
 
     assets_by_id: dict[str, Path] = {}
+    assets_obj_by_id: dict[str, dict[str, Any]] = {}
     rels_by_id: dict[str, Path] = {}
+    relationships: list[tuple[Path, dict[str, Any]]] = []
     had_errors = False
 
     for path, obj in manifests:
@@ -102,6 +112,7 @@ def validate_registry_dir(registry_dir: Path) -> int:
                     error(f"Duplicate CI id '{ci_id}' in {path} (already in {assets_by_id[ci_id]})")
                 else:
                     assets_by_id[ci_id] = path
+                    assets_obj_by_id[ci_id] = obj
 
             spec = obj.get("spec") or {}
             if spec.get("type") == "aasu":
@@ -129,19 +140,97 @@ def validate_registry_dir(registry_dir: Path) -> int:
                     error(f"Duplicate relationship id '{rel_id}' in {path} (already in {rels_by_id[rel_id]})")
                 else:
                     rels_by_id[rel_id] = path
+            relationships.append((path, obj))
 
-    for path, obj in manifests:
-        if obj.get("kind") != "Relationship":
-            continue
+    relationship_types_expected: dict[str, tuple[set[str], set[str]]] = {
+        "uses_short_term_memory": ({"aasu"}, {"memory_short_term_profile"}),
+        "uses_long_term_memory": ({"aasu"}, {"memory_long_term_profile"}),
+        "uses_skill": ({"aasu"}, {"skill_package"}),
+        "uses_knowledge_graph": ({"aasu"}, {"knowledge_graph"}),
+        "uses_context_graph_profile": ({"aasu"}, {"context_graph_profile"}),
+        "context_graph_derived_from": ({"context_graph_profile"}, {"knowledge_graph"}),
+        "stores_memory_in": (
+            {"memory_short_term_profile", "memory_long_term_profile"},
+            {"store"},
+        ),
+        "indexes_from_corpus": ({"retrieval"}, {"dataset"}),
+        "attests": ({"attestation_bundle", "aibom_document"}, set()),
+    }
+
+    outgoing_by_from: dict[str, list[tuple[str, str, Path]]] = {}
+    for path, obj in relationships:
         spec = obj.get("spec") or {}
         from_id = spec.get("from")
         to_id = spec.get("to")
+        rel_type = spec.get("type")
         if isinstance(from_id, str) and from_id not in assets_by_id:
             had_errors = True
             error(f"Relationship endpoint missing (from='{from_id}') referenced by {path}")
         if isinstance(to_id, str) and to_id not in assets_by_id:
             had_errors = True
             error(f"Relationship endpoint missing (to='{to_id}') referenced by {path}")
+
+        if not (isinstance(from_id, str) and isinstance(to_id, str) and isinstance(rel_type, str)):
+            continue
+
+        outgoing_by_from.setdefault(from_id, []).append((rel_type, to_id, path))
+
+        expected = relationship_types_expected.get(rel_type)
+        if expected is None:
+            continue
+
+        from_types, to_types = expected
+        from_obj = assets_obj_by_id.get(from_id)
+        to_obj = assets_obj_by_id.get(to_id)
+        from_type = _asset_type(from_obj) if isinstance(from_obj, dict) else None
+        to_type = _asset_type(to_obj) if isinstance(to_obj, dict) else None
+
+        if from_types and from_type not in from_types:
+            had_errors = True
+            error(
+                f"Relationship type '{rel_type}' requires from.type in {sorted(from_types)}, "
+                f"got '{from_type}' for {from_id} in {path}"
+            )
+        if to_types and to_type not in to_types:
+            had_errors = True
+            error(
+                f"Relationship type '{rel_type}' requires to.type in {sorted(to_types)}, "
+                f"got '{to_type}' for {to_id} in {path}"
+            )
+
+    for ci_id, ci_obj in assets_obj_by_id.items():
+        if _asset_type(ci_obj) != "aasu":
+            continue
+        spec = ci_obj.get("spec") or {}
+        environment = spec.get("environment")
+        outgoing = outgoing_by_from.get(ci_id, [])
+
+        stm = [r for r in outgoing if r[0] == "uses_short_term_memory"]
+        if len(stm) != 1:
+            had_errors = True
+            error(
+                f"AASU '{ci_id}' must have exactly one uses_short_term_memory relationship; "
+                f"found {len(stm)}"
+            )
+
+        ltm = [r for r in outgoing if r[0] == "uses_long_term_memory"]
+        if environment == "prod" and len(ltm) != 1:
+            had_errors = True
+            error(
+                f"Production AASU '{ci_id}' must have exactly one uses_long_term_memory relationship; "
+                f"found {len(ltm)}"
+            )
+        elif len(ltm) > 1:
+            had_errors = True
+            error(f"AASU '{ci_id}' has multiple uses_long_term_memory relationships ({len(ltm)}).")
+
+        kg = [r for r in outgoing if r[0] == "uses_knowledge_graph"]
+        cg = [r for r in outgoing if r[0] == "uses_context_graph_profile"]
+        if cg and not kg:
+            had_errors = True
+            error(
+                f"AASU '{ci_id}' uses_context_graph_profile but has no uses_knowledge_graph relationship."
+            )
 
     if had_errors:
         return 1

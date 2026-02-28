@@ -62,6 +62,52 @@ def _read_nested(obj: dict[str, Any], path: list[str]) -> Any:
     return cur
 
 
+def _ci_type(obj: dict[str, Any]) -> str | None:
+    spec = obj.get("spec")
+    if not isinstance(spec, dict):
+        return None
+    typ = spec.get("type")
+    return typ if isinstance(typ, str) else None
+
+
+def _is_prod_aasu(obj: dict[str, Any]) -> bool:
+    if _ci_type(obj) != "aasu":
+        return False
+    spec = obj.get("spec")
+    if not isinstance(spec, dict):
+        return False
+    return spec.get("environment") == "prod"
+
+
+def _is_unpinned_version(version: str) -> bool:
+    value = version.strip().lower()
+    return value in {"provider:rolling", "latest", "main", "master"}
+
+
+def _load_assets_and_relationships(
+    registry_dir: Path,
+) -> tuple[dict[str, dict[str, Any]], list[tuple[str, str, str]]]:
+    assets_by_id: dict[str, dict[str, Any]] = {}
+    relationships: list[tuple[str, str, str]] = []
+
+    for _, obj in iter_manifests(registry_dir):
+        kind = obj.get("kind")
+        if kind == "ConfigurationItem":
+            ci_id = _read_nested(obj, ["metadata", "id"])
+            if isinstance(ci_id, str):
+                assets_by_id[ci_id] = obj
+            continue
+
+        if kind == "Relationship":
+            rel_type = _read_nested(obj, ["spec", "type"])
+            from_id = _read_nested(obj, ["spec", "from"])
+            to_id = _read_nested(obj, ["spec", "to"])
+            if isinstance(rel_type, str) and isinstance(from_id, str) and isinstance(to_id, str):
+                relationships.append((rel_type, from_id, to_id))
+
+    return assets_by_id, relationships
+
+
 def _replace_single_occurrence(text: str, old: str, new: str) -> str | None:
     if old == new:
         return text
@@ -301,16 +347,8 @@ def _load_registry_index(registry_dir: Path) -> tuple[dict[str, dict[str, Any]],
     - assets_by_id: CI id -> manifest dict
     - aasu_reverse_refs: asset CI id -> set of AASU CI ids that reference it in (P,M,R,T,K)
     """
-    assets_by_id: dict[str, dict[str, Any]] = {}
+    assets_by_id, relationships = _load_assets_and_relationships(registry_dir)
     aasu_reverse_refs: dict[str, set[str]] = defaultdict(set)
-
-    for _, obj in iter_manifests(registry_dir):
-        if obj.get("kind") != "ConfigurationItem":
-            continue
-        ci_id = _read_nested(obj, ["metadata", "id"])
-        if not isinstance(ci_id, str):
-            continue
-        assets_by_id[ci_id] = obj
 
     for ci_id, obj in assets_by_id.items():
         spec = obj.get("spec") or {}
@@ -334,6 +372,25 @@ def _load_registry_index(registry_dir: Path) -> tuple[dict[str, dict[str, Any]],
             for t in tools:
                 add_ref(t)
 
+    outgoing: dict[str, set[str]] = defaultdict(set)
+    for _, from_id, to_id in relationships:
+        outgoing[from_id].add(to_id)
+
+    for ci_id, obj in assets_by_id.items():
+        if _ci_type(obj) != "aasu":
+            continue
+        visited: set[str] = set()
+        stack = list(outgoing.get(ci_id, set()))
+        while stack:
+            nxt = stack.pop()
+            if nxt in visited:
+                continue
+            visited.add(nxt)
+            aasu_reverse_refs[nxt].add(ci_id)
+            for child in outgoing.get(nxt, set()):
+                if child not in visited:
+                    stack.append(child)
+
     return assets_by_id, aasu_reverse_refs
 
 
@@ -350,6 +407,186 @@ def _format_owner_list(owners: Any) -> list[str]:
         if isinstance(otype, str) and isinstance(oid, str) and isinstance(role, str):
             out.append(f"{otype}:{oid} ({role})")
     return out
+
+
+def _index_relationships(
+    relationships: list[tuple[str, str, str]],
+) -> tuple[dict[str, list[tuple[str, str]]], dict[str, list[tuple[str, str]]]]:
+    outgoing: dict[str, list[tuple[str, str]]] = defaultdict(list)
+    incoming: dict[str, list[tuple[str, str]]] = defaultdict(list)
+    for rel_type, from_id, to_id in relationships:
+        outgoing[from_id].append((rel_type, to_id))
+        incoming[to_id].append((rel_type, from_id))
+    return outgoing, incoming
+
+
+def cmd_policy_check(args: argparse.Namespace) -> int:
+    registry_dir = Path(args.registry).resolve()
+    if not args.skip_validate:
+        base_rc = validate_registry_dir(registry_dir)
+        if base_rc != 0:
+            return base_rc
+
+    assets_by_id, relationships = _load_assets_and_relationships(registry_dir)
+    outgoing, incoming = _index_relationships(relationships)
+
+    findings: list[str] = []
+    for ci_id, obj in assets_by_id.items():
+        if not _is_prod_aasu(obj):
+            continue
+
+        snapshot = _read_nested(obj, ["spec", "aasu", "snapshot"])
+        if not isinstance(snapshot, dict):
+            findings.append(f"{ci_id}: missing spec.aasu.snapshot")
+            continue
+
+        def inspect_component(name: str, component: Any) -> None:
+            if not isinstance(component, dict):
+                return
+            version = component.get("version")
+            if isinstance(version, str) and _is_unpinned_version(version):
+                findings.append(f"{ci_id}: component {name} uses unpinned version '{version}'")
+
+        for key in ("P", "M", "R", "K"):
+            inspect_component(key, snapshot.get(key))
+        tools = snapshot.get("T")
+        if isinstance(tools, list):
+            for idx, tool in enumerate(tools):
+                inspect_component(f"T[{idx}]", tool)
+
+        has_attestation = False
+        for rel_type, src in incoming.get(ci_id, []):
+            if rel_type != "attests":
+                continue
+            src_obj = assets_by_id.get(src)
+            if isinstance(src_obj, dict) and _ci_type(src_obj) == "attestation_bundle":
+                has_attestation = True
+                break
+        if not has_attestation:
+            findings.append(f"{ci_id}: missing attestation_bundle -> attests relationship")
+
+        model_component = snapshot.get("M")
+        model_id = model_component.get("asset") if isinstance(model_component, dict) else None
+        if isinstance(model_id, str):
+            model_has_aibom = False
+            for rel_type, src in incoming.get(model_id, []):
+                if rel_type != "attests":
+                    continue
+                src_obj = assets_by_id.get(src)
+                if isinstance(src_obj, dict) and _ci_type(src_obj) == "aibom_document":
+                    model_has_aibom = True
+                    break
+            if not model_has_aibom:
+                findings.append(f"{ci_id}: model '{model_id}' has no incoming attests edge from aibom_document")
+
+        outgoing_rels = outgoing.get(ci_id, [])
+        if not any(rel_type == "uses_short_term_memory" for rel_type, _ in outgoing_rels):
+            findings.append(f"{ci_id}: missing uses_short_term_memory relationship")
+        if not any(rel_type == "uses_long_term_memory" for rel_type, _ in outgoing_rels):
+            findings.append(f"{ci_id}: missing uses_long_term_memory relationship")
+
+    if findings:
+        print("POLICY CHECK FAILED")
+        for finding in findings:
+            print(f"- {finding}")
+        return 1
+
+    print("OK: policy checks passed for production AASUs.")
+    return 0
+
+
+def cmd_memory_audit(args: argparse.Namespace) -> int:
+    registry_dir = Path(args.registry).resolve()
+    if not args.skip_validate:
+        base_rc = validate_registry_dir(registry_dir)
+        if base_rc != 0:
+            return base_rc
+
+    assets_by_id, relationships = _load_assets_and_relationships(registry_dir)
+    outgoing, _ = _index_relationships(relationships)
+    findings: list[str] = []
+
+    print("## Memory Audit")
+    for ci_id, obj in sorted(assets_by_id.items()):
+        if _ci_type(obj) != "aasu":
+            continue
+        rels = outgoing.get(ci_id, [])
+        stm = [dst for rel_type, dst in rels if rel_type == "uses_short_term_memory"]
+        ltm = [dst for rel_type, dst in rels if rel_type == "uses_long_term_memory"]
+        print(f"- `{ci_id}`")
+        print(f"  - short-term memory profiles: {', '.join(stm) if stm else 'none'}")
+        print(f"  - long-term memory profiles: {', '.join(ltm) if ltm else 'none'}")
+
+        if len(stm) != 1:
+            findings.append(f"{ci_id}: expected exactly one short-term memory profile, found {len(stm)}")
+        if _is_prod_aasu(obj) and len(ltm) != 1:
+            findings.append(f"{ci_id}: production AASU expected exactly one long-term memory profile, found {len(ltm)}")
+
+    for ci_id, obj in sorted(assets_by_id.items()):
+        typ = _ci_type(obj)
+        if typ not in {"memory_short_term_profile", "memory_long_term_profile"}:
+            continue
+        stores = [dst for rel_type, dst in outgoing.get(ci_id, []) if rel_type == "stores_memory_in"]
+        print(f"- `{ci_id}` stores memory in: {', '.join(stores) if stores else 'none'}")
+        if not stores:
+            findings.append(f"{ci_id}: missing stores_memory_in relationship")
+
+    if findings:
+        print("")
+        print("MEMORY AUDIT FINDINGS")
+        for finding in findings:
+            print(f"- {finding}")
+        return 1 if args.strict else 0
+
+    print("")
+    print("OK: memory audit passed.")
+    return 0
+
+
+def cmd_attest_verify(args: argparse.Namespace) -> int:
+    registry_dir = Path(args.registry).resolve()
+    if not args.skip_validate:
+        base_rc = validate_registry_dir(registry_dir)
+        if base_rc != 0:
+            return base_rc
+
+    assets_by_id, relationships = _load_assets_and_relationships(registry_dir)
+    outgoing, incoming = _index_relationships(relationships)
+    findings: list[str] = []
+
+    for ci_id, obj in sorted(assets_by_id.items()):
+        if _ci_type(obj) != "attestation_bundle":
+            continue
+        targets = [dst for rel_type, dst in outgoing.get(ci_id, []) if rel_type == "attests"]
+        if not targets:
+            findings.append(f"{ci_id}: attestation_bundle has no outgoing attests relationships")
+
+    for ci_id, obj in sorted(assets_by_id.items()):
+        if not _is_prod_aasu(obj):
+            continue
+        attest_sources = [
+            src
+            for rel_type, src in incoming.get(ci_id, [])
+            if rel_type == "attests" and _ci_type(assets_by_id.get(src, {})) == "attestation_bundle"
+        ]
+        if not attest_sources:
+            findings.append(f"{ci_id}: production AASU has no attestation_bundle attesting it")
+
+    for ci_id, obj in sorted(assets_by_id.items()):
+        if _ci_type(obj) != "aibom_document":
+            continue
+        targets = [dst for rel_type, dst in outgoing.get(ci_id, []) if rel_type == "attests"]
+        if not targets:
+            findings.append(f"{ci_id}: aibom_document has no outgoing attests relationships")
+
+    if findings:
+        print("ATTEST VERIFY FAILED")
+        for finding in findings:
+            print(f"- {finding}")
+        return 1
+
+    print("OK: attestation relationships are present.")
+    return 0
 
 
 def cmd_impact(args: argparse.Namespace) -> int:
@@ -566,6 +803,7 @@ def cmd_impact(args: argparse.Namespace) -> int:
 
         lines.append("### Next steps")
         lines.append("- Run `python3 tools/aasu_registry.py validate`.")
+        lines.append("- Run `python3 tools/aasu_registry.py policy-check` for regulated policy gates.")
         lines.append("- If you changed any AASU snapshot `(P,M,R,T,K)`, run `python3 tools/aasu_registry.py fingerprint --all --write`.")
         out_text = "\n".join(lines).rstrip() + "\n"
 
@@ -615,6 +853,28 @@ def build_parser() -> argparse.ArgumentParser:
     p_impact.add_argument("--pretty", action="store_true", help="Pretty-print JSON output.")
     p_impact.add_argument("--out", help="Write output to a file instead of stdout.")
     p_impact.set_defaults(func=cmd_impact)
+
+    p_policy = sub.add_parser(
+        "policy-check",
+        help="Run policy checks for regulated-ready AASU governance (pinning, memory links, attestations).",
+    )
+    p_policy.add_argument("--skip-validate", action="store_true", help="Skip base schema/graph/fingerprint validation.")
+    p_policy.set_defaults(func=cmd_policy_check)
+
+    p_memory = sub.add_parser(
+        "memory-audit",
+        help="Summarize AASU short/long-term memory relationships and storage bindings.",
+    )
+    p_memory.add_argument("--skip-validate", action="store_true", help="Skip base schema/graph/fingerprint validation.")
+    p_memory.add_argument("--strict", action="store_true", help="Return non-zero if audit findings exist.")
+    p_memory.set_defaults(func=cmd_memory_audit)
+
+    p_attest = sub.add_parser(
+        "attest-verify",
+        help="Verify attestation bundle and AIBOM attestation relationships are present.",
+    )
+    p_attest.add_argument("--skip-validate", action="store_true", help="Skip base schema/graph/fingerprint validation.")
+    p_attest.set_defaults(func=cmd_attest_verify)
 
     return parser
 

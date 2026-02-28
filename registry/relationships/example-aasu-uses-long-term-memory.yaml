@@ -1,0 +1,9 @@
+apiVersion: aasu.ai/v1alpha1
+kind: Relationship
+metadata:
+  id: rel:ci:aasu:customer-support-chatbot:prod:uses_long_term_memory:profile
+spec:
+  type: uses_long_term_memory
+  from: ci:aasu:customer-support-chatbot:prod
+  to: ci:memory_long_term_profile:customer-support:tenant:v1
+
