@@ -414,8 +414,9 @@ For operational governance in regulated environments, this implementation profil
 - Attach model inventory and supply-chain evidence through **AIBOM** and **attestation bundles**.
 
 **Required relationship controls (production profile):**
-- Every AASU references exactly one short-term memory profile.
-- Every production AASU references exactly one long-term memory profile.
+- AASUs MAY omit memory relationships.
+- If long-term memory is configured, short-term memory is mandatory.
+- Memory-enabled production AASUs reference exactly one long-term memory profile.
 - If context graph profile is used, a knowledge graph reference is mandatory.
 - Production AASUs require attestation linkage and model AIBOM linkage.
 

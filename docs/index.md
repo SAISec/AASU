@@ -7,8 +7,7 @@ title: Atomic AI Security Unit (AASU)
 
 **AASU = (P, M, R, T, K)**  
 Prompt package, Model instance & parameters, Retrieval configuration, Tool/MCP configuration, Runtime constraints.
-This site provides a landing page for the AASU project.
-- A reference registry + CLI tooling for GitHub PR workflows
+This site provides a landing page for the AASU project, including a reference registry and CLI tooling for GitHub PR workflows.
 
 ## Quick links
 - Repository overview: [`README.md`](../README.md)

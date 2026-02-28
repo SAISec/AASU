@@ -81,7 +81,15 @@ def _is_prod_aasu(obj: dict[str, Any]) -> bool:
 
 def _is_unpinned_version(version: str) -> bool:
     value = version.strip().lower()
-    return value in {"provider:rolling", "latest", "main", "master"}
+    if value in {"latest", "rolling", "main", "master", "trunk", "head"}:
+        return True
+    if "refs/heads/" in value:
+        return True
+    if value.startswith("git:branch:") or value.startswith("branch:") or ":branch:" in value:
+        return True
+    if re.search(r"(^|:)(latest|rolling|main|master|trunk|head)$", value):
+        return True
+    return False
 
 
 def _load_assets_and_relationships(
@@ -486,10 +494,23 @@ def cmd_policy_check(args: argparse.Namespace) -> int:
                 findings.append(f"{ci_id}: model '{model_id}' has no incoming attests edge from aibom_document")
 
         outgoing_rels = outgoing.get(ci_id, [])
-        if not any(rel_type == "uses_short_term_memory" for rel_type, _ in outgoing_rels):
-            findings.append(f"{ci_id}: missing uses_short_term_memory relationship")
-        if not any(rel_type == "uses_long_term_memory" for rel_type, _ in outgoing_rels):
-            findings.append(f"{ci_id}: missing uses_long_term_memory relationship")
+        stm_count = sum(1 for rel_type, _ in outgoing_rels if rel_type == "uses_short_term_memory")
+        ltm_count = sum(1 for rel_type, _ in outgoing_rels if rel_type == "uses_long_term_memory")
+        memory_enabled = stm_count > 0 or ltm_count > 0
+        if stm_count > 1:
+            findings.append(f"{ci_id}: multiple uses_short_term_memory relationships ({stm_count})")
+        if ltm_count > 1:
+            findings.append(f"{ci_id}: multiple uses_long_term_memory relationships ({ltm_count})")
+        if ltm_count > 0 and stm_count == 0:
+            findings.append(f"{ci_id}: long-term memory is configured without short-term memory")
+        if memory_enabled and ltm_count != 1:
+            findings.append(
+                f"{ci_id}: memory-enabled production AASU must have exactly one uses_long_term_memory relationship"
+            )
+        if args.require_memory_for_prod and not memory_enabled:
+            findings.append(
+                f"{ci_id}: memory is required for production AASU under --require-memory-for-prod policy"
+            )
 
     if findings:
         print("POLICY CHECK FAILED")
@@ -522,11 +543,17 @@ def cmd_memory_audit(args: argparse.Namespace) -> int:
         print(f"- `{ci_id}`")
         print(f"  - short-term memory profiles: {', '.join(stm) if stm else 'none'}")
         print(f"  - long-term memory profiles: {', '.join(ltm) if ltm else 'none'}")
-
-        if len(stm) != 1:
-            findings.append(f"{ci_id}: expected exactly one short-term memory profile, found {len(stm)}")
-        if _is_prod_aasu(obj) and len(ltm) != 1:
-            findings.append(f"{ci_id}: production AASU expected exactly one long-term memory profile, found {len(ltm)}")
+        memory_enabled = len(stm) > 0 or len(ltm) > 0
+        if len(stm) > 1:
+            findings.append(f"{ci_id}: expected at most one short-term memory profile, found {len(stm)}")
+        if len(ltm) > 1:
+            findings.append(f"{ci_id}: expected at most one long-term memory profile, found {len(ltm)}")
+        if len(ltm) > 0 and len(stm) == 0:
+            findings.append(f"{ci_id}: has long-term memory profile but no short-term memory profile")
+        if _is_prod_aasu(obj) and memory_enabled and len(ltm) != 1:
+            findings.append(
+                f"{ci_id}: memory-enabled production AASU expected exactly one long-term memory profile, found {len(ltm)}"
+            )
 
     for ci_id, obj in sorted(assets_by_id.items()):
         typ = _ci_type(obj)
@@ -865,6 +892,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Run policy checks for regulated-ready AASU governance (pinning, memory links, attestations).",
     )
     p_policy.add_argument("--skip-validate", action="store_true", help="Skip base schema/graph/fingerprint validation.")
+    p_policy.add_argument(
+        "--require-memory-for-prod",
+        action="store_true",
+        help="Require production AASUs to explicitly configure memory relationships.",
+    )
     p_policy.set_defaults(func=cmd_policy_check)
 
     p_memory = sub.add_parser(

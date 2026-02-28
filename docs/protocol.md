@@ -143,8 +143,9 @@ For CIs where `spec.type: aasu`, the manifest MUST include:
 - Compute `sha256` and store as `sha256:<64-hex>`
 
 Validation invariants for regulated profiles:
-- Every AASU MUST reference exactly one short-term memory profile.
-- Production AASUs MUST reference exactly one long-term memory profile.
+- AASUs MAY omit memory relationships.
+- If an AASU references long-term memory, it MUST also reference short-term memory.
+- If an AASU enables memory in production, it MUST reference exactly one long-term memory profile.
 - If an AASU references a context graph profile, it MUST also reference a knowledge graph.
 
 ---

@@ -206,23 +206,29 @@ def validate_registry_dir(registry_dir: Path) -> int:
         outgoing = outgoing_by_from.get(ci_id, [])
 
         stm = [r for r in outgoing if r[0] == "uses_short_term_memory"]
-        if len(stm) != 1:
+        if len(stm) > 1:
             had_errors = True
             error(
-                f"AASU '{ci_id}' must have exactly one uses_short_term_memory relationship; "
-                f"found {len(stm)}"
+                f"AASU '{ci_id}' has multiple uses_short_term_memory relationships ({len(stm)})."
             )
 
         ltm = [r for r in outgoing if r[0] == "uses_long_term_memory"]
-        if environment == "prod" and len(ltm) != 1:
+        if len(ltm) > 1:
             had_errors = True
             error(
-                f"Production AASU '{ci_id}' must have exactly one uses_long_term_memory relationship; "
-                f"found {len(ltm)}"
+                f"AASU '{ci_id}' has multiple uses_long_term_memory relationships ({len(ltm)})."
             )
-        elif len(ltm) > 1:
+        if ltm and not stm:
             had_errors = True
-            error(f"AASU '{ci_id}' has multiple uses_long_term_memory relationships ({len(ltm)}).")
+            error(
+                f"AASU '{ci_id}' uses long-term memory but is missing uses_short_term_memory relationship."
+            )
+        if environment == "prod" and stm and len(ltm) != 1:
+            had_errors = True
+            error(
+                f"Production AASU '{ci_id}' with memory enabled must have exactly one "
+                f"uses_long_term_memory relationship; found {len(ltm)}"
+            )
 
         kg = [r for r in outgoing if r[0] == "uses_knowledge_graph"]
         cg = [r for r in outgoing if r[0] == "uses_context_graph_profile"]
