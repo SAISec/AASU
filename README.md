@@ -15,6 +15,7 @@ This repository provides:
 - Registry & tooling: `docs/registry.md`
 - GitHub Pages site entry: `docs/index.md`
 - TODOs / roadmap: `TODO.md`
+- Roadmap: `ROADMAP.md`
 
 ## AASU unit decomposition
 An Atomic AI Security Unit is a **configuration-bound** unit:
