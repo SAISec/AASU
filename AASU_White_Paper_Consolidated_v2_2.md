@@ -81,16 +81,30 @@ flowchart TB
   A --> K
   A -->|certify against| ID
 
-  P --> Pdetail["System/developer prompts<br/>Prompt hierarchy<br/>Routing prompts"]:::detail
-  M --> Mdetail["Provider + model version<br/>Decoding params (temp, top_p)<br/>Max tokens"]:::detail
-  R --> Rdetail["Corpus/indices IDs<br/>Chunking + top-k<br/>Filters/thresholds"]:::detail
-  T --> Tdetail["Tool schemas<br/>Permissions/allowlists<br/>Execution environment"]:::detail
-  K --> Kdetail["Rate limits/timeouts<br/>Context limits<br/>Safety/guardrail enforcement"]:::detail
+  subgraph G["Governance Extension Assets (v1alpha2)"]
+    S["Skill package"]:::ext
+    STM["Short-term memory profile"]:::ext
+    LTM["Long-term memory profile"]:::ext
+    KG["Knowledge graph"]:::ext
+    CG["Context graph profile"]:::ext
+    BOM["AIBOM document"]:::ext
+    ATT["Attestation bundle"]:::ext
+  end
+
+  A -->|uses_skill| S
+  A -->|uses_short_term_memory| STM
+  A -->|uses_long_term_memory| LTM
+  A -->|uses_knowledge_graph| KG
+  A -->|uses_context_graph_profile| CG
+  CG -->|context_graph_derived_from| KG
+  BOM -->|attests| M
+  ATT -->|attests| A
+  ATT -->|attests| BOM
 
   classDef aasu fill:#0b7285,stroke:#083344,color:#ffffff;
   classDef id fill:#fff3bf,stroke:#f08c00,color:#7c2d12;
   classDef comp fill:#e6fcf5,stroke:#0b7285,color:#083344;
-  classDef detail fill:#f8f9fa,stroke:#ced4da,color:#343a40;
+  classDef ext fill:#f1f3f5,stroke:#495057,color:#212529;
 ```
 
 Illustrative runtime flow for a single user request through an AASU:
@@ -98,17 +112,21 @@ Illustrative runtime flow for a single user request through an AASU:
 ```mermaid
 flowchart TB
   IN["User input"] --> PRE["K: Pre-guardrails<br/>(policy checks, limits, allow/deny)"]
-  PRE --> RET{"R enabled?"}
+  PRE --> CG["Context graph assembly<br/>(R + KG + STM/LTM + policy filters)"]
+  CG --> SK{"Skill required?"}
 
-  RET -->|yes| RAG["R: Retrieval<br/>(query → top-k context)"]
-  RET -->|no| ASSEMBLE["P: Prompt assembly<br/>(system + developer + user + context)"]
-  RAG --> ASSEMBLE
+  SK -->|yes| SKILL["Skill package invocation<br/>(procedural memory)"]
+  SK -->|no| ASSEMBLE["P: Prompt assembly<br/>(system + developer + user + context graph)"]
+  SKILL --> ASSEMBLE
 
   ASSEMBLE --> CALL["M: Model call<br/>(model + decoding params)"]
   CALL --> TOOL{"Tool call requested?"}
 
   TOOL -->|yes| EXEC["T: Tool / MCP execution<br/>(permissions + sandbox)"]
-  EXEC --> ASSEMBLE
+  EXEC --> MEM{"Persist to long-term memory?"}
+  MEM -->|yes| LTMW["LTM write<br/>(consent + retention policy)"]
+  MEM -->|no| ASSEMBLE
+  LTMW --> ASSEMBLE
 
   TOOL -->|no| POST["K: Post-guardrails<br/>(output filtering + safe handling)"]
   POST --> OUT["Response"]
@@ -262,7 +280,16 @@ flowchart LR
     ORCH -->|TB3| TOOL[Tool / MCP runtime]
     TOOL --> SYS[(Enterprise systems)]
 
-    ORCH --> MEM[Session memory / state]
+    ORCH --> STM[Short-term memory profile]
+    ORCH --> LTM[Long-term memory profile]
+    STM --> MSTORE[(Memory store)]
+    LTM --> MSTORE
+    ORCH --> KG[Knowledge graph]
+    ORCH --> CG[Context graph profile]
+    CG --> KG
+    ORCH --> SK[Skill package registry]
+    ORCH --> BOM[AIBOM docs]
+    ORCH --> ATT[Attestation bundle]
     ORCH --> LOG[Audit logs / telemetry]
 
     ORCH --> A1[AASU-1]
@@ -337,9 +364,12 @@ Test the full directed graph as an attack surface:
 ```mermaid
 flowchart LR
   DEV["Define / update AASU config<br/>(P, M, R, T, K)"] --> MAN["Generate manifest<br/>(versioned snapshot)"]
-  MAN --> HASH["Compute AASU ID<br/>(configuration hash)"]
+  MAN --> EXT["Bind extension assets<br/>(skills, STM/LTM, KG/CG)"]
+  EXT --> HASH["Compute AASU ID<br/>(configuration hash)"]
+  HASH --> BOM["Generate/update AIBOM"]
+  BOM --> ATT["Create signed attestation bundle"]
 
-  HASH --> T1["Layer 1 tests<br/>(AASU-level)"]
+  ATT --> T1["Layer 1 tests<br/>(AASU-level)"]
   T1 --> T2["Layer 2 tests<br/>(orchestration)"]
   T2 --> T3["Layer 3 tests<br/>(attack-graph)"]
 
@@ -408,6 +438,21 @@ For operational governance in regulated environments, this implementation profil
 - `stores_memory_in`
 - `indexes_from_corpus`
 - `attests`
+
+```mermaid
+flowchart LR
+  AASU["ci:aasu:*"] -->|uses_skill| SK["ci:skill_package:*"]
+  AASU -->|uses_short_term_memory| STM["ci:memory_short_term_profile:*"]
+  AASU -->|uses_long_term_memory| LTM["ci:memory_long_term_profile:*"]
+  AASU -->|uses_knowledge_graph| KG["ci:knowledge_graph:*"]
+  AASU -->|uses_context_graph_profile| CG["ci:context_graph_profile:*"]
+  CG -->|context_graph_derived_from| KG
+  STM -->|stores_memory_in| STORE["ci:store:memory:*"]
+  LTM -->|stores_memory_in| STORE
+  AIBOM["ci:aibom_document:*"] -->|attests| MODEL["ci:model:*"]
+  ATT["ci:attestation_bundle:*"] -->|attests| AASU
+  ATT -->|attests| AIBOM
+```
 
 ---
 

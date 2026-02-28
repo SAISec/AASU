@@ -46,6 +46,19 @@ Related governance controls are modeled as separate CIs and relationships:
 - knowledge graph and context graph profile (`uses_knowledge_graph`, `uses_context_graph_profile`)
 - attestations (`attests`)
 
+```mermaid
+flowchart LR
+  AASU["AASU (P,M,R,T,K)"] -->|uses_skill| SK["Skill package"]
+  AASU -->|uses_short_term_memory| STM["Short-term memory profile"]
+  AASU -->|uses_long_term_memory| LTM["Long-term memory profile"]
+  AASU -->|uses_knowledge_graph| KG["Knowledge graph"]
+  AASU -->|uses_context_graph_profile| CG["Context graph profile"]
+  CG -->|context_graph_derived_from| KG
+  AIBOM["AIBOM document"] -->|attests| MODEL["Model CI"]
+  ATT["Attestation bundle"] -->|attests| AASU
+  ATT -->|attests| AIBOM
+```
+
 ## Architecture patterns (chains and graphs)
 Modern AI systems are composed of multiple AASUs, typically in these patterns:
 
