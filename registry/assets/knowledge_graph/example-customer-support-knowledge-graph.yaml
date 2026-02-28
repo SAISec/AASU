@@ -1,0 +1,24 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:knowledge_graph:customer-support:prod:v1
+  name: Knowledge Graph (Customer Support / prod) v1
+  owners:
+    - type: team
+      id: data-platform
+      role: primary
+    - type: team
+      id: appsec
+      role: security
+spec:
+  type: knowledge_graph
+  lifecycle: active
+  environment: prod
+  knowledge_graph:
+    snapshot: "kg-snapshot:2026-02-25"
+    provenance_required: true
+    sensitivity_labels:
+      - public
+      - internal
+      - restricted
+

@@ -10,12 +10,22 @@ This repository provides:
 - A Git-native CMDB-as-code protocol for asset mapping and audit-ready governance
 - A reference registry + CLI tooling for GitHub PR workflows (add-on)
 
+## v1alpha2 governance extensions
+This repo now includes first-class registry support for:
+- **Skills as separate assets** (`spec.type: skill_package`)
+- **Short-term memory profiles** (`spec.type: memory_short_term_profile`)
+- **Long-term memory profiles** (`spec.type: memory_long_term_profile`)
+- **Knowledge/context graph profiles** (`knowledge_graph`, `context_graph_profile`)
+- **AIBOM and attestation assets** (`aibom_document`, `attestation_bundle`)
+
+The core AASU abstraction remains unchanged: `(P,M,R,T,K)`. These extensions are linked through relationships for governance and impact analysis.
+
 ## Quick links
 - Protocol: `docs/protocol.md`
 - Registry & tooling: `docs/registry.md`
 - GitHub Pages site entry: `docs/index.md`
-- TODOs / roadmap: `TODO.md`
-- Roadmap: `ROADMAP.md`
+- Public roadmap: `ROADMAP.md`
+- Implementation backlog (working TODOs): `TODO.md`
 
 ## AASU unit decomposition
 An Atomic AI Security Unit is a **configuration-bound** unit:
@@ -28,6 +38,26 @@ An Atomic AI Security Unit is a **configuration-bound** unit:
 - **K**: Runtime constraints
 
 Any change to **P/M/R/T/K** creates a new AASU and requires re‑validation.
+
+Related governance controls are modeled as separate CIs and relationships:
+- skills (`uses_skill`)
+- short-term memory (`uses_short_term_memory`)
+- long-term memory (`uses_long_term_memory`)
+- knowledge graph and context graph profile (`uses_knowledge_graph`, `uses_context_graph_profile`)
+- attestations (`attests`)
+
+```mermaid
+flowchart LR
+  AASU["AASU (P,M,R,T,K)"] -->|uses_skill| SK["Skill package"]
+  AASU -->|uses_short_term_memory| STM["Short-term memory profile"]
+  AASU -->|uses_long_term_memory| LTM["Long-term memory profile"]
+  AASU -->|uses_knowledge_graph| KG["Knowledge graph"]
+  AASU -->|uses_context_graph_profile| CG["Context graph profile"]
+  CG -->|context_graph_derived_from| KG
+  AIBOM["AIBOM document"] -->|attests| MODEL["Model CI"]
+  ATT["Attestation bundle"] -->|attests| AASU
+  ATT -->|attests| AIBOM
+```
 
 ## Architecture patterns (chains and graphs)
 Modern AI systems are composed of multiple AASUs, typically in these patterns:
@@ -104,6 +134,9 @@ arxiv_paper/     LaTeX source for submission-style paper
 ```bash
 python3 tools/aasu_registry.py validate
 python3 tools/aasu_registry.py fingerprint --all --write
+python3 tools/aasu_registry.py policy-check
+python3 tools/aasu_registry.py memory-audit --strict
+python3 tools/aasu_registry.py attest-verify
 ```
 
 ## Contributing
@@ -114,4 +147,3 @@ See `SECURITY.md` for reporting guidelines.
 
 ## License
 Apache-2.0. See `LICENSE`.
-

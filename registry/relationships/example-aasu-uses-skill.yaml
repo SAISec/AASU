@@ -1,0 +1,9 @@
+apiVersion: aasu.ai/v1alpha1
+kind: Relationship
+metadata:
+  id: rel:ci:aasu:customer-support-chatbot:prod:uses_skill:customer-support-triage
+spec:
+  type: uses_skill
+  from: ci:aasu:customer-support-chatbot:prod
+  to: ci:skill_package:customer-support-triage:v1
+

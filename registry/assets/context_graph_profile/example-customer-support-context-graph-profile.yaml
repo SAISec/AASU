@@ -1,0 +1,22 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:context_graph_profile:customer-support:prod:v1
+  name: Context Graph Profile (Customer Support / prod) v1
+  owners:
+    - type: team
+      id: product-ai
+      role: primary
+    - type: team
+      id: appsec
+      role: security
+spec:
+  type: context_graph_profile
+  lifecycle: active
+  environment: prod
+  context_graph_profile:
+    assembly_strategy: relevance-and-policy-filtered
+    max_context_nodes: 40
+    max_context_tokens: 12000
+    provenance_required: true
+

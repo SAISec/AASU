@@ -1,0 +1,21 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:dataset:customer-support-kb:prod:2026-02-01
+  name: Dataset (Customer Support KB Corpus / prod / 2026-02-01)
+  owners:
+    - type: team
+      id: data-platform
+      role: primary
+spec:
+  type: dataset
+  lifecycle: active
+  environment: prod
+  artifacts:
+    - kind: artifact
+      url: artifact:registry/datasets/customer-support-kb/2026-02-01.tar.zst
+  dataset:
+    data_classification: internal
+    source_systems:
+      - support-kb
+
