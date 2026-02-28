@@ -133,6 +133,8 @@ def update_aasu_fingerprint_in_file(path: Path, *, write: bool) -> tuple[bool, s
     snapshot = _read_nested(obj, ["spec", "aasu", "snapshot"])
     if snapshot is None:
         raise ValueError(f"Missing spec.aasu.snapshot: {path}")
+    if not isinstance(snapshot, dict):
+        raise ValueError(f"Invalid spec.aasu.snapshot (expected object): {path}")
 
     expected = compute_sha256_fingerprint(snapshot)
 
@@ -199,6 +201,10 @@ def cmd_fingerprint(args: argparse.Namespace) -> int:
 
             existing = _read_nested(obj, ["spec", "aasu", "fingerprint", "value"])
             snapshot = _read_nested(obj, ["spec", "aasu", "snapshot"])
+            if snapshot is None:
+                raise ValueError("Missing spec.aasu.snapshot")
+            if not isinstance(snapshot, dict):
+                raise ValueError("Invalid spec.aasu.snapshot (expected object)")
             expected = compute_sha256_fingerprint(snapshot)
 
             if existing != expected:
