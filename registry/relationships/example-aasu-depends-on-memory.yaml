@@ -1,0 +1,8 @@
+apiVersion: aasu.ai/v1alpha1
+kind: Relationship
+metadata:
+  id: rel:ci:aasu:customer-support-chatbot:prod:depends_on:memory
+spec:
+  type: depends_on
+  from: ci:aasu:customer-support-chatbot:prod
+  to: ci:memory:session:customer-support-chatbot:prod

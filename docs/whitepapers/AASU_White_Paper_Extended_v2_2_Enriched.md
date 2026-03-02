@@ -57,7 +57,8 @@ Security posture = f(model)
 
 # 2. Atomic AI Security Unit (AASU)
 
-AASU = (P, M, R, T, K)
+AASU core = (P, M, R, T, K)  
+AASU extension = (Mem, S)
 
 Where:
 
@@ -65,9 +66,11 @@ P = Prompt Package\
 M = Model & Parameters\
 R = Retrieval Configuration\
 T = Tool/MCP Layer\
-K = Runtime Guardrails
+K = Runtime Guardrails\
+Mem = Memory Configuration\
+S = Skill Configuration
 
-Any change in P, M, R, T, or K creates a new AASU.
+Any change in P, M, R, T, K, Mem, or S creates a new AASU.
 
 ------------------------------------------------------------------------
 
@@ -77,9 +80,9 @@ Any change in P, M, R, T, or K creates a new AASU.
 
 ``` mermaid
 flowchart LR
-    User --> A1[AASU-1]
-    A1 --> A2[AASU-2]
-    A2 --> A3[AASU-3]
+    User --> A1["AASU-1<br/>(core + Mem/S)"]
+    A1 --> A2["AASU-2<br/>(core + Mem/S)"]
+    A2 --> A3["AASU-3<br/>(core + Mem/S)"]
     A3 --> Output
 ```
 
@@ -88,9 +91,9 @@ flowchart LR
 ``` mermaid
 flowchart LR
     User --> Router
-    Router --> A1[AASU-A]
-    Router --> A2[AASU-B]
-    Router --> A3[AASU-C]
+    Router --> A1["AASU-A<br/>(core + Mem/S)"]
+    Router --> A2["AASU-B<br/>(core + Mem/S)"]
+    Router --> A3["AASU-C<br/>(core + Mem/S)"]
 ```
 
 ## Hybrid Directed Graph
@@ -98,11 +101,11 @@ flowchart LR
 ``` mermaid
 flowchart TD
     User --> Router
-    Router --> A1[AASU-1]
-    Router --> A2[AASU-2]
-    A1 --> B1[AASU-3]
+    Router --> A1["AASU-1<br/>(core + Mem/S)"]
+    Router --> A2["AASU-2<br/>(core + Mem/S)"]
+    A1 --> B1["AASU-3<br/>(core + Mem/S)"]
     A2 --> B1
-    B1 --> C1[AASU-4]
+    B1 --> C1["AASU-4<br/>(core + Mem/S)"]
 ```
 
 ------------------------------------------------------------------------

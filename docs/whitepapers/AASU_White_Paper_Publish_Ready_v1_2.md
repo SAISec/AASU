@@ -32,7 +32,7 @@ This paper formalizes:
 
 ## 1.1 Formal Definition
 
-AASU = (P, M, R, T, K)
+AASU core = (P, M, R, T, K) and extension = (Mem, S)
 
 Where:
 
@@ -41,8 +41,10 @@ Where:
 -   R = Retrieval Configuration
 -   T = Tool/MCP Configuration
 -   K = Runtime Constraints
+-   Mem = Memory Configuration
+-   S = Skill Configuration
 
-Any change in P, M, R, T, or K creates a new AASU.
+Any change in P, M, R, T, K, Mem, or S creates a new AASU.
 
 ------------------------------------------------------------------------
 
@@ -52,7 +54,7 @@ Any change in P, M, R, T, or K creates a new AASU.
 
 ``` mermaid
 flowchart LR
-    User --> AASU
+    User --> AASU["AASU<br/>(P,M,R,T,K + Mem,S)"]
     AASU --> Output
 ```
 
@@ -65,9 +67,9 @@ Security Surface: - Prompt injection - Model hallucination - Tool misuse
 
 ``` mermaid
 flowchart LR
-    User --> A1[AASU-1]
-    A1 --> A2[AASU-2]
-    A2 --> A3[AASU-3]
+    User --> A1["AASU-1<br/>(core + Mem/S)"]
+    A1 --> A2["AASU-2<br/>(core + Mem/S)"]
+    A2 --> A3["AASU-3<br/>(core + Mem/S)"]
     A3 --> Output
 ```
 
@@ -81,9 +83,9 @@ Privilege escalation chains - Context contamination
 ``` mermaid
 flowchart LR
     User --> Router
-    Router --> A1[AASU-A]
-    Router --> A2[AASU-B]
-    Router --> A3[AASU-C]
+    Router --> A1["AASU-A<br/>(core + Mem/S)"]
+    Router --> A2["AASU-B<br/>(core + Mem/S)"]
+    Router --> A3["AASU-C<br/>(core + Mem/S)"]
     A1 --> Output
     A2 --> Output
     A3 --> Output
@@ -99,11 +101,11 @@ Routing manipulation risk
 ``` mermaid
 flowchart TD
     User --> R[Router]
-    R --> A1[AASU-1]
-    R --> A2[AASU-2]
-    A1 --> B1[AASU-3]
+    R --> A1["AASU-1<br/>(core + Mem/S)"]
+    R --> A2["AASU-2<br/>(core + Mem/S)"]
+    A1 --> B1["AASU-3<br/>(core + Mem/S)"]
     A2 --> B1
-    B1 --> C1[AASU-4]
+    B1 --> C1["AASU-4<br/>(core + Mem/S)"]
     C1 --> Output
 ```
 

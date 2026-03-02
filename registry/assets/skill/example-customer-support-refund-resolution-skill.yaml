@@ -1,0 +1,21 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:skill:customer-support:refund-resolution:v1
+  name: Skill Pack (Customer Support Refund Resolution) v1
+  owners:
+    - type: team
+      id: product-ai
+      role: primary
+spec:
+  type: skill
+  lifecycle: active
+  skill:
+    interface: mcp
+    capabilities:
+      - name: verify-order-eligibility
+        tool: ci:tool:mcp:refunds
+      - name: create-refund
+        tool: ci:tool:mcp:refunds
+    guardrails:
+      require_human_approval_for_high_value_refunds: true

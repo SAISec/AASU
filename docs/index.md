@@ -5,8 +5,11 @@ title: Atomic AI Security Unit (AASU)
 
 # Atomic AI Security Unit (AASU)
 
-**AASU = (P, M, R, T, K)**  
+**AASU core = (P, M, R, T, K)**  
 Prompt package, Model instance & parameters, Retrieval configuration, Tool/MCP configuration, Runtime constraints.
+
+**AASU extension = (Mem, S)**  
+Memory configuration, Skill configuration.
 This site provides a landing page for the AASU project.
 - A reference registry + CLI tooling for GitHub PR workflows
 
@@ -19,4 +22,3 @@ This site provides a landing page for the AASU project.
 - Git-CMDB protocol (AGCVCP): [`protocol.md`](protocol.md)
 - Registry + tooling: [`registry.md`](registry.md)
  
-

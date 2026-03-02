@@ -3,7 +3,7 @@ kind: ConfigurationItem
 metadata:
   id: ci:aasu:customer-support-chatbot:prod
   name: AASU Snapshot (Customer Support Chatbot / prod)
-  description: Configuration-bound unit (P,M,R,T,K) for prod.
+  description: Configuration-bound unit (P,M,R,T,K) with optional (Mem,S) extension for prod.
   owners:
     - type: team
       id: product-ai
@@ -32,9 +32,15 @@ spec:
       K:
         asset: ci:policy:runtime:customer-support-chatbot-prod
         version: "policy:v1"
+      Mem:
+        asset: ci:memory:session:customer-support-chatbot:prod
+        version: "memory-config:v1"
+      S:
+        asset: ci:skill:customer-support:refund-resolution:v1
+        version: "skill-pack:v1"
     fingerprint:
       algorithm: sha256
-      value: sha256:3b608048da92f1cb65d6f6f6405fb887c13617a0ce5db0e1c5cbc1dbd11a4b8b
+      value: sha256:21a6e96c85e676bed22525159fe841ec0fe95d26eb2d4ac4087af54849f5843d
     certification:
       status: pending
       evidence:

@@ -67,6 +67,8 @@
             "prompt_package",
             "retrieval",
             "tool",
+            "memory",
+            "skill",
             "runtime",
             "policy",
             "service",
@@ -171,7 +173,9 @@
           "minItems": 1,
           "items": { "$ref": "#/$defs/componentRef" }
         },
-        "K": { "$ref": "#/$defs/componentRef" }
+        "K": { "$ref": "#/$defs/componentRef" },
+        "Mem": { "$ref": "#/$defs/componentRef" },
+        "S": { "$ref": "#/$defs/componentRef" }
       }
     },
     "componentRef": {
@@ -188,4 +192,3 @@
     }
   }
 }
-

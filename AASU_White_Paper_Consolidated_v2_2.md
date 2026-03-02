@@ -53,7 +53,8 @@ Not:
 
 An AASU is a tightly bound, versioned configuration:
 
-**AASU = (P, M, R, T, K)**
+**AASU core = (P, M, R, T, K)**  
+**AASU extension = (Mem, S)**
 
 Where:
 - **P = Prompt Package** (system prompts, templates, policy prompts, routing prompts, prompt hierarchy, prompt chaining)
@@ -61,6 +62,8 @@ Where:
 - **R = Retrieval Configuration** (RAG settings, corpus selection, embedding model, chunking, filters, top-k, thresholds)
 - **T = Tool/MCP Configuration** (tool schemas, connectors/plugins, permissions, execution environment, Model Context Protocol if present)
 - **K = Runtime Constraints / Guardrails** (policy enforcement, timeouts, rate limits, context limits, safety filters, sandbox constraints)
+- **Mem = Memory Configuration** (short/long-term memory backend, retention, access controls, state isolation)
+- **S = Skill Configuration** (skill package composition, invocation policy, skill-scoped permissions)
 
 ```mermaid
 flowchart TB
@@ -72,12 +75,16 @@ flowchart TB
   R["R — Retrieval (RAG) config"]:::comp
   T["T — Tools / MCP config"]:::comp
   K["K — Runtime constraints"]:::comp
+  Mem["Mem — Memory config"]:::comp
+  S["S — Skill config"]:::comp
 
   A --> P
   A --> M
   A --> R
   A --> T
   A --> K
+  A --> Mem
+  A --> S
   A -->|certify against| ID
 
   P --> Pdetail["System/developer prompts<br/>Prompt hierarchy<br/>Routing prompts"]:::detail
@@ -85,6 +92,8 @@ flowchart TB
   R --> Rdetail["Corpus/indices IDs<br/>Chunking + top-k<br/>Filters/thresholds"]:::detail
   T --> Tdetail["Tool schemas<br/>Permissions/allowlists<br/>Execution environment"]:::detail
   K --> Kdetail["Rate limits/timeouts<br/>Context limits<br/>Safety/guardrail enforcement"]:::detail
+  Mem --> Memdetail["State backend<br/>Retention and TTL<br/>Memory access controls"]:::detail
+  S --> Sdetail["Skill definitions<br/>Skill invocation policy<br/>Skill-scoped privileges"]:::detail
 
   classDef aasu fill:#0b7285,stroke:#083344,color:#ffffff;
   classDef id fill:#fff3bf,stroke:#f08c00,color:#7c2d12;
@@ -97,23 +106,28 @@ Illustrative runtime flow for a single user request through an AASU:
 ```mermaid
 flowchart TB
   IN["User input"] --> PRE["K: Pre-guardrails<br/>(policy checks, limits, allow/deny)"]
-  PRE --> RET{"R enabled?"}
+  PRE --> MEMR["Mem: Load relevant state<br/>(policy-scoped memory)"]
+  MEMR --> RET{"R enabled?"}
 
   RET -->|yes| RAG["R: Retrieval<br/>(query → top-k context)"]
   RET -->|no| ASSEMBLE["P: Prompt assembly<br/>(system + developer + user + context)"]
   RAG --> ASSEMBLE
 
   ASSEMBLE --> CALL["M: Model call<br/>(model + decoding params)"]
-  CALL --> TOOL{"Tool call requested?"}
+  CALL --> SKILL{"S: Skill invocation<br/>required?"}
+  SKILL -->|yes| SPOL["S: Skill policy + routing<br/>(allowed skills only)"]
+  SKILL -->|no| TOOL{"Tool call requested?"}
+  SPOL --> TOOL
 
   TOOL -->|yes| EXEC["T: Tool / MCP execution<br/>(permissions + sandbox)"]
   EXEC --> ASSEMBLE
 
   TOOL -->|no| POST["K: Post-guardrails<br/>(output filtering + safe handling)"]
-  POST --> OUT["Response"]
+  POST --> MEMW["Mem: Persist approved state<br/>(TTL + redaction rules)"]
+  MEMW --> OUT["Response"]
 ```
 
-**Any change in P, M, R, T, or K creates a new AASU.**
+**Any change in P, M, R, T, K, Mem, or S creates a new AASU.**
 
 ### 2.2 Configuration Snapshot Principle
 
@@ -137,7 +151,7 @@ In enterprise systems, AASUs rarely operate in isolation. They are deployed in d
 
 ```mermaid
 flowchart LR
-    User --> AASU
+    User --> AASU["AASU<br/>(P,M,R,T,K + Mem,S)"]
     AASU --> Output
 ```
 
@@ -153,9 +167,9 @@ User → AASU-1 → AASU-2 → AASU-3 → Output
 
 ```mermaid
 flowchart LR
-    User --> A1[AASU-1]
-    A1 --> A2[AASU-2]
-    A2 --> A3[AASU-3]
+    User --> A1["AASU-1<br/>(core + Mem/S)"]
+    A1 --> A2["AASU-2<br/>(core + Mem/S)"]
+    A2 --> A3["AASU-3<br/>(core + Mem/S)"]
     A3 --> Output
 ```
 
@@ -177,9 +191,9 @@ User → Router → Multiple Independent AASUs → Output(s)
 ```mermaid
 flowchart LR
     User --> Router
-    Router --> A1[AASU-A]
-    Router --> A2[AASU-B]
-    Router --> A3[AASU-C]
+    Router --> A1["AASU-A<br/>(core + Mem/S)"]
+    Router --> A2["AASU-B<br/>(core + Mem/S)"]
+    Router --> A3["AASU-C<br/>(core + Mem/S)"]
     A1 --> Output
     A2 --> Output
     A3 --> Output
@@ -204,11 +218,11 @@ Edges = data-flow, context-flow, or tool-result reinjection relationships
 ```mermaid
 flowchart TD
     User --> R[Router]
-    R --> A1[AASU-1]
-    R --> A2[AASU-2]
-    A1 --> B1[AASU-3]
+    R --> A1["AASU-1<br/>(core + Mem/S)"]
+    R --> A2["AASU-2<br/>(core + Mem/S)"]
+    A1 --> B1["AASU-3<br/>(core + Mem/S)"]
     A2 --> B1
-    B1 --> C1[AASU-4]
+    B1 --> C1["AASU-4<br/>(core + Mem/S)"]
     C1 --> Output
 ```
 
@@ -264,8 +278,8 @@ flowchart LR
     ORCH --> MEM[Session memory / state]
     ORCH --> LOG[Audit logs / telemetry]
 
-    ORCH --> A1[AASU-1]
-    ORCH --> A2[AASU-2]
+    ORCH --> A1["AASU-1<br/>(core + Mem/S)"]
+    ORCH --> A2["AASU-2<br/>(core + Mem/S)"]
     A1 <-->|TB5| A2
   end
 
@@ -335,7 +349,7 @@ Test the full directed graph as an attack surface:
 
 ```mermaid
 flowchart LR
-  DEV["Define / update AASU config<br/>(P, M, R, T, K)"] --> MAN["Generate manifest<br/>(versioned snapshot)"]
+  DEV["Define / update AASU config<br/>(P, M, R, T, K, Mem, S)"] --> MAN["Generate manifest<br/>(versioned snapshot)"]
   MAN --> HASH["Compute AASU ID<br/>(configuration hash)"]
 
   HASH --> T1["Layer 1 tests<br/>(AASU-level)"]
@@ -441,7 +455,7 @@ Taxonomies evolve. The mappings below reflect the referenced versions used in th
 
 ## 8. Formal Model Summary
 
-**AASU = (P, M, R, T, K)**
+**AASU core = (P, M, R, T, K) + extension (Mem, S)**
 
 **AI System = Directed Graph of AASUs**
 

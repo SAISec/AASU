@@ -15,7 +15,7 @@ Validate all manifests (schemas + relationship integrity + AASU fingerprint chec
 python3 tools/aasu_registry.py validate
 ```
 
-After editing an AASU snapshot `(P,M,R,T,K)`, update fingerprints and re-validate:
+After editing an AASU snapshot `(P,M,R,T,K)` (or extension components `Mem`/`S`), update fingerprints and re-validate:
 
 ```bash
 python3 tools/aasu_registry.py fingerprint --all --write
@@ -44,4 +44,3 @@ python3 tools/aasu_registry.py export --pretty --out registry-export.json
 - Require the validation workflow: `.github/workflows/registry-validate.yml`
 - Optionally post an “Impact Report” PR comment (already configured in the workflow)
 - Use `.github/CODEOWNERS.template` (rename/customize) + branch protections for required approvals
-
