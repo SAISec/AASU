@@ -15,7 +15,7 @@ Validate all manifests (schemas + relationship integrity + AASU fingerprint chec
 python3 tools/aasu_registry.py validate
 ```
 
-After editing an AASU snapshot `(P,M,R,T,K)` (or extension component `S`), update fingerprints and re-validate:
+After editing an AASU snapshot `(P,M,R,T,K)` (or extension components `H`/`S`), update fingerprints and re-validate:
 
 ```bash
 python3 tools/aasu_registry.py fingerprint --all --write

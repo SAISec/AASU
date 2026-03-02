@@ -28,8 +28,8 @@ The AASU model formalizes that an AI capability is a **configuration-bound unit*
 **AASU core = (P, M, R, T, K)**  
 Prompt package, Model instance, Retrieval configuration, Tool/MCP configuration, Runtime constraints.
 
-**AASU extension = (S)**  
-State and skill configuration.
+**AASU extension = (H, S)**  
+History/memory configuration and skill configuration.
 
 Security and assurance therefore require:
 - A **versioned manifest** per deployed configuration snapshot
@@ -55,7 +55,7 @@ Minimum requirements for a practical AASU asset registry:
 - Relationships must be queryable and reviewable like code.
 
 **Snapshot binding**
-- AASU snapshots MUST be representable as an immutable tuple `(P,M,R,T,K)` with optional extension component `(S)` for state/skills, using explicit version references (commit SHA, image digest, provider snapshot ID).
+- AASU snapshots MUST be representable as an immutable tuple `(P,M,R,T,K)` with optional extension components `(H,S)` for memory and skills, using explicit version references (commit SHA, image digest, provider snapshot ID).
 - Each snapshot MUST compute a deterministic **fingerprint** (e.g., `sha256:`) and treat that as the canonical identity for certification.
 
 **Change control**
@@ -121,7 +121,7 @@ Each relationship is a YAML file with:
 
 ### 4.3 AASU snapshot & fingerprint (the core AASU binding)
 For CIs where `spec.type: aasu`, the manifest MUST include:
-- `spec.aasu.snapshot`: the exact `(P,M,R,T,K)` tuple, optionally extended with `(S)`, using **versioned references**
+- `spec.aasu.snapshot`: the exact `(P,M,R,T,K)` tuple, optionally extended with `(H,S)`, using **versioned references**
 - `spec.aasu.fingerprint`: deterministic hash of `spec.aasu.snapshot`
 
 **Fingerprint rule (v1):**

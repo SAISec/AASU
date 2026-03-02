@@ -174,11 +174,8 @@
           "items": { "$ref": "#/$defs/componentRef" }
         },
         "K": { "$ref": "#/$defs/componentRef" },
-        "S": {
-          "type": "array",
-          "minItems": 1,
-          "items": { "$ref": "#/$defs/componentRef" }
-        }
+        "H": { "$ref": "#/$defs/componentRef" },
+        "S": { "$ref": "#/$defs/componentRef" }
       }
     },
     "componentRef": {

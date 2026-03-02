@@ -32,7 +32,7 @@ This paper formalizes:
 
 ## 1.1 Formal Definition
 
-AASU core = (P, M, R, T, K) and extension = (S)
+AASU core = (P, M, R, T, K) and extension = (H, S)
 
 Where:
 
@@ -41,9 +41,10 @@ Where:
 -   R = Retrieval Configuration
 -   T = Tool/MCP Configuration
 -   K = Runtime Constraints
--   S = State and Skill Configuration
+-   H = History/Memory Configuration
+-   S = Skill Configuration
 
-Any change in P, M, R, T, K, or S creates a new AASU.
+Any change in P, M, R, T, K, H, or S creates a new AASU.
 
 ------------------------------------------------------------------------
 
@@ -53,7 +54,7 @@ Any change in P, M, R, T, K, or S creates a new AASU.
 
 ``` mermaid
 flowchart LR
-    User --> AASU["AASU<br/>(P,M,R,T,K + S)"]
+    User --> AASU["AASU<br/>(P,M,R,T,K + H,S)"]
     AASU --> Output
 ```
 
@@ -66,9 +67,9 @@ Security Surface: - Prompt injection - Model hallucination - Tool misuse
 
 ``` mermaid
 flowchart LR
-    User --> A1["AASU-1<br/>(core + S)"]
-    A1 --> A2["AASU-2<br/>(core + S)"]
-    A2 --> A3["AASU-3<br/>(core + S)"]
+    User --> A1["AASU-1<br/>(core + H,S)"]
+    A1 --> A2["AASU-2<br/>(core + H,S)"]
+    A2 --> A3["AASU-3<br/>(core + H,S)"]
     A3 --> Output
 ```
 
@@ -82,9 +83,9 @@ Privilege escalation chains - Context contamination
 ``` mermaid
 flowchart LR
     User --> Router
-    Router --> A1["AASU-A<br/>(core + S)"]
-    Router --> A2["AASU-B<br/>(core + S)"]
-    Router --> A3["AASU-C<br/>(core + S)"]
+    Router --> A1["AASU-A<br/>(core + H,S)"]
+    Router --> A2["AASU-B<br/>(core + H,S)"]
+    Router --> A3["AASU-C<br/>(core + H,S)"]
     A1 --> Output
     A2 --> Output
     A3 --> Output
@@ -100,11 +101,11 @@ Routing manipulation risk
 ``` mermaid
 flowchart TD
     User --> R[Router]
-    R --> A1["AASU-1<br/>(core + S)"]
-    R --> A2["AASU-2<br/>(core + S)"]
-    A1 --> B1["AASU-3<br/>(core + S)"]
+    R --> A1["AASU-1<br/>(core + H,S)"]
+    R --> A2["AASU-2<br/>(core + H,S)"]
+    A1 --> B1["AASU-3<br/>(core + H,S)"]
     A2 --> B1
-    B1 --> C1["AASU-4<br/>(core + S)"]
+    B1 --> C1["AASU-4<br/>(core + H,S)"]
     C1 --> Output
 ```
 
