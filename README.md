@@ -5,8 +5,8 @@
 **AASU core = (P, M, R, T, K)**  
 Prompt package, Model instance & parameters, Retrieval configuration, Tool/MCP configuration, Runtime constraints.
 
-**AASU extension = (Mem, S)**  
-Memory configuration, Skill configuration.
+**AASU extension = (S)**  
+State and skill configuration.
 
 This repository provides:
 - The AASU white paper (Markdown + HTML/PDF) — **primary deliverable**
@@ -29,10 +29,9 @@ An Atomic AI Security Unit is a **configuration-bound** unit:
 - **R**: Retrieval configuration (RAG)
 - **T**: Tool/MCP configuration
 - **K**: Runtime constraints
-- **Mem**: Memory configuration (optional extension)
-- **S**: Skill configuration (optional extension)
+- **S**: State and skill configuration (optional extension)
 
-Any change to **P/M/R/T/K/Mem/S** creates a new AASU and requires re-validation.
+Any change to **P/M/R/T/K/S** creates a new AASU and requires re-validation.
 
 ## Architecture patterns (chains and graphs)
 Modern AI systems are composed of multiple AASUs, typically in these patterns:
@@ -42,7 +41,7 @@ Modern AI systems are composed of multiple AASUs, typically in these patterns:
 
 ```mermaid
 flowchart LR
-  User --> AASU["AASU<br/>(P,M,R,T,K + Mem,S)"]
+  User --> AASU["AASU<br/>(P,M,R,T,K + S)"]
   AASU --> Output
 ```
 
@@ -50,9 +49,9 @@ flowchart LR
   Risks: cascading failure, injection amplification, context contamination, privilege escalation chains
 ```mermaid
 flowchart LR
-  User --> A1["AASU-1<br/>(core + Mem/S)"]
-  A1 --> A2["AASU-2<br/>(core + Mem/S)"]
-  A2 --> A3["AASU-3<br/>(core + Mem/S)"]
+  User --> A1["AASU-1<br/>(core + S)"]
+  A1 --> A2["AASU-2<br/>(core + S)"]
+  A2 --> A3["AASU-3<br/>(core + S)"]
   A3 --> Output
 ```
 
@@ -61,9 +60,9 @@ flowchart LR
 ```mermaid
 flowchart LR
   User --> Router
-  Router --> A1["AASU-A<br/>(core + Mem/S)"]
-  Router --> A2["AASU-B<br/>(core + Mem/S)"]
-  Router --> A3["AASU-C<br/>(core + Mem/S)"]
+  Router --> A1["AASU-A<br/>(core + S)"]
+  Router --> A2["AASU-B<br/>(core + S)"]
+  Router --> A3["AASU-C<br/>(core + S)"]
   A1 --> Output
   A2 --> Output
   A3 --> Output
@@ -78,7 +77,7 @@ flowchart LR
 3. **Attack‑graph testing**: multi‑agent escalation, cross‑AASU exfiltration
 
 ## How AASU differs from typical AI and agentic AI applications
-- **Unit of analysis**: AASU treats the *configuration snapshot* (P/M/R/T/K, optionally Mem/S) as the unit of risk, not the model or the app.
+- **Unit of analysis**: AASU treats the *configuration snapshot* (P/M/R/T/K, optionally S) as the unit of risk, not the model or the app.
 - **Topology‑aware**: Typical AI app reviews are per‑app; AASU models chains, routers, and graphs as a security surface.
 - **Certification‑bound**: Validation ties evidence to a specific configuration hash; any change creates a new AASU.
 - **Agentic clarity**: Agentic systems often blur boundaries; AASU makes each agent an explicit, testable unit with clear edges and privileges.
@@ -86,7 +85,7 @@ flowchart LR
 
 ## FAQ
 **Is AASU just a model card?**  
-No. AASU covers the full configuration snapshot (P/M/R/T/K, optionally Mem/S), including retrieval, tooling, runtime guardrails, memory, and skill behavior.
+No. AASU covers the full configuration snapshot (P/M/R/T/K, optionally S), including retrieval, tooling, runtime guardrails, state handling, and skill behavior.
 
 **Do I need AASU if I only use one model?**  
 Yes—prompt, tools, and runtime constraints can materially change risk even when the model stays the same.

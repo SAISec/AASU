@@ -299,7 +299,7 @@ def _load_registry_index(registry_dir: Path) -> tuple[dict[str, dict[str, Any]],
     """
     Returns:
     - assets_by_id: CI id -> manifest dict
-    - aasu_reverse_refs: asset CI id -> set of AASU CI ids that reference it in (P,M,R,T,K,Mem,S)
+    - aasu_reverse_refs: asset CI id -> set of AASU CI ids that reference it in (P,M,R,T,K,S)
     """
     assets_by_id: dict[str, dict[str, Any]] = {}
     aasu_reverse_refs: dict[str, set[str]] = defaultdict(set)
@@ -327,12 +327,19 @@ def _load_registry_index(registry_dir: Path) -> tuple[dict[str, dict[str, Any]],
             if isinstance(ref_id, str):
                 aasu_reverse_refs[ref_id].add(ci_id)
 
-        for key in ("P", "M", "R", "K", "Mem", "S"):
+        for key in ("P", "M", "R", "K"):
             add_ref(snapshot.get(key))
         tools = snapshot.get("T")
         if isinstance(tools, list):
             for t in tools:
                 add_ref(t)
+        state_skills = snapshot.get("S")
+        if isinstance(state_skills, list):
+            for s in state_skills:
+                add_ref(s)
+        else:
+            # Backward compatibility for legacy manifests using S as a single component.
+            add_ref(state_skills)
 
     return assets_by_id, aasu_reverse_refs
 
@@ -567,7 +574,7 @@ def cmd_impact(args: argparse.Namespace) -> int:
         lines.append("### Next steps")
         lines.append("- Run `python3 tools/aasu_registry.py validate`.")
         lines.append(
-            "- If you changed any AASU snapshot `(P,M,R,T,K)` or extension components `(Mem,S)`, run `python3 tools/aasu_registry.py fingerprint --all --write`."
+            "- If you changed any AASU snapshot `(P,M,R,T,K)` or extension component `(S)`, run `python3 tools/aasu_registry.py fingerprint --all --write`."
         )
         out_text = "\n".join(lines).rstrip() + "\n"
 

@@ -184,7 +184,7 @@ Any modification invalidates prior certification.
 
 # 6. Formal Model Summary
 
-AASU = {Prompt, Model, RAG, MCP, Parameters, Memory, Skills}
+AASU = {Prompt, Model, RAG, MCP, Parameters, State-and-Skills}
 
 AI System = Directed Graph of AASUs
 

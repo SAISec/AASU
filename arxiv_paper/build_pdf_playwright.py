@@ -85,7 +85,7 @@ def _svg_wrap(svg: str) -> str:
 SVG_BY_FIGURE_ID: dict[str, str] = {
     "fig:aasu": _svg_wrap(
         r"""
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 410" role="img" aria-label="AASU components diagram">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 365" role="img" aria-label="AASU components diagram">
   <defs>
     <marker id="arrow" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
       <path d="M0,0 L12,4 L0,8 Z" fill="#343a40" />
@@ -109,15 +109,13 @@ SVG_BY_FIGURE_ID: dict[str, str] = {
   <rect x="140" y="230" width="440" height="36" rx="8" ry="8" class="box"/>
   <rect x="140" y="274" width="440" height="36" rx="8" ry="8" class="box"/>
   <rect x="140" y="318" width="440" height="36" rx="8" ry="8" class="box"/>
-  <rect x="140" y="362" width="440" height="36" rx="8" ry="8" class="box"/>
 
   <text x="160" y="122" class="t2">P — Prompt package</text>
   <text x="160" y="166" class="t2">M — Model instance &amp; parameters</text>
   <text x="160" y="210" class="t2">R — Retrieval (RAG) configuration</text>
   <text x="160" y="254" class="t2">T — Tools / MCP configuration</text>
   <text x="160" y="298" class="t2">K — Runtime constraints / guardrails</text>
-  <text x="160" y="342" class="t2">Mem — Memory configuration</text>
-  <text x="160" y="386" class="t2">S — Skill configuration</text>
+  <text x="160" y="342" class="t2">S — State &amp; skill configuration</text>
 
   <path d="M360,74 L360,90" class="arrow"/>
   <path d="M360,134 L360,138" class="arrow"/>
@@ -125,7 +123,6 @@ SVG_BY_FIGURE_ID: dict[str, str] = {
   <path d="M360,222 L360,226" class="arrow"/>
   <path d="M360,266 L360,270" class="arrow"/>
   <path d="M360,310 L360,314" class="arrow"/>
-  <path d="M360,354 L360,358" class="arrow"/>
 </svg>
 """.strip()
     ),
@@ -536,7 +533,7 @@ SVG_BY_FIGURE_ID: dict[str, str] = {
 
   <rect x="30" y="86" width="130" height="54" rx="10" ry="10" class="box"/>
   <text x="95" y="110" text-anchor="middle" class="tB">Define / update</text>
-  <text x="95" y="128" text-anchor="middle" class="tB">P,M,R,T,K + Mem,S</text>
+  <text x="95" y="128" text-anchor="middle" class="tB">P,M,R,T,K + S</text>
 
   <rect x="180" y="86" width="130" height="54" rx="10" ry="10" class="box"/>
   <text x="245" y="110" text-anchor="middle" class="tB">Generate</text>

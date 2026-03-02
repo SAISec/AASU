@@ -337,7 +337,7 @@ safety and least privilege.</p>
 <ol>
 <li><p>We define the <span class="smallcaps">AASU</span> as a
 configuration-bound, versioned unit of security evaluation:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">A</mi><mi mathvariant="normal">S</mi><mi mathvariant="normal">U</mi></mrow><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mtext mathvariant="normal">Mem</mtext><mo>,</mo><mi>S</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathrm{AASU}= (P,M,R,T,K,\text{Mem},S)</annotation></semantics></math>.</p></li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">A</mi><mi mathvariant="normal">S</mi><mi mathvariant="normal">U</mi></mrow><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mi>S</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathrm{AASU}= (P,M,R,T,K,S)</annotation></semantics></math>.</p></li>
 <li><p>We model deployed LLM applications as directed graphs of <span
 class="smallcaps">AASU</span>s and formalize node- and edge-scoped
 threat surfaces.</p></li>
@@ -430,7 +430,7 @@ data-cites="eu_ai_act">(European Union 2024)</span>.</p>
 <p>We define an <span class="smallcaps">AASU</span> as the minimal
 configuration snapshot that must be treated as a single unit for
 security evaluation:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">A</mi><mi mathvariant="normal">S</mi><mi mathvariant="normal">U</mi></mrow><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mtext mathvariant="normal">Mem</mtext><mo>,</mo><mi>S</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathrm{AASU}= (P, M, R, T, K, \text{Mem}, S)</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">A</mi><mi mathvariant="normal">S</mi><mi mathvariant="normal">U</mi></mrow><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mi>S</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathrm{AASU}= (P, M, R, T, K, S)</annotation></semantics></math>
 where:</p>
 <ul>
 <li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>
@@ -450,16 +450,14 @@ allow/deny lists, connector versions, runtime sandbox),</p></li>
 <li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
 is runtime constraints and guardrails (rate limits, timeouts, context
 limits, output handling constraints),</p></li>
-<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">Mem</mtext><annotation encoding="application/x-tex">\text{Mem}</annotation></semantics></math>
-is the memory configuration (state backend, retention, and isolation
-controls),</p></li>
 <li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
-is the skill configuration (skill pack definitions, invocation policy,
-and skill-scoped privileges).</p></li>
+is the state and skill configuration (memory backend/retention/isolation
+controls and skill pack definitions/invocation policy/skill-scoped
+privileges).</p></li>
 </ul>
 <figure id="fig:aasu">
 
-<div class="figure-diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 410" role="img" aria-label="AASU components diagram">
+<div class="figure-diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 365" role="img" aria-label="AASU components diagram">
   <defs>
     <marker id="arrow" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
       <path d="M0,0 L12,4 L0,8 Z" fill="#343a40" />
@@ -483,15 +481,13 @@ and skill-scoped privileges).</p></li>
   <rect x="140" y="230" width="440" height="36" rx="8" ry="8" class="box"/>
   <rect x="140" y="274" width="440" height="36" rx="8" ry="8" class="box"/>
   <rect x="140" y="318" width="440" height="36" rx="8" ry="8" class="box"/>
-  <rect x="140" y="362" width="440" height="36" rx="8" ry="8" class="box"/>
 
   <text x="160" y="122" class="t2">P — Prompt package</text>
   <text x="160" y="166" class="t2">M — Model instance &amp; parameters</text>
   <text x="160" y="210" class="t2">R — Retrieval (RAG) configuration</text>
   <text x="160" y="254" class="t2">T — Tools / MCP configuration</text>
   <text x="160" y="298" class="t2">K — Runtime constraints / guardrails</text>
-  <text x="160" y="342" class="t2">Mem — Memory configuration</text>
-  <text x="160" y="386" class="t2">S — Skill configuration</text>
+  <text x="160" y="342" class="t2">S — State &amp; skill configuration</text>
 
   <path d="M360,74 L360,90" class="arrow"/>
   <path d="M360,134 L360,138" class="arrow"/>
@@ -499,12 +495,11 @@ and skill-scoped privileges).</p></li>
   <path d="M360,222 L360,226" class="arrow"/>
   <path d="M360,266 L360,270" class="arrow"/>
   <path d="M360,310 L360,314" class="arrow"/>
-  <path d="M360,354 L360,358" class="arrow"/>
 </svg></div>
 <figcaption>The Atomic AI Security Unit (<span
 class="smallcaps">AASU</span>) as a configuration snapshot. Any change
 to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mtext mathvariant="normal">Mem</mtext><mo>,</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">P,M,R,T,K,\text{Mem},S</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">P,M,R,T,K,S</annotation></semantics></math>
 yields a distinct <span class="smallcaps">AASU</span> that requires
 separate assurance.</figcaption>
 </figure>
@@ -518,7 +513,7 @@ must bind to a concrete configuration snapshot.</p>
 <p>We recommend representing each <span class="smallcaps">AASU</span> as
 a canonical manifest (e.g., JSON) and computing an identifier via
 cryptographic hashing:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="sans-serif">𝖠𝖠𝖲𝖴_𝖨𝖣</mtext><mo>=</mo><mi>H</mi><mo stretchy="false" form="prefix">(</mo><mtext mathvariant="sans-serif">𝖢𝖺𝗇𝗈𝗇𝗂𝖼𝖺𝗅𝖲𝖾𝗋𝗂𝖺𝗅𝗂𝗓𝖾</mtext><mo stretchy="false" form="prefix">(</mo><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mtext mathvariant="normal">Mem</mtext><mo>,</mo><mi>S</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\textsf{AASU\_ID} = H(\textsf{CanonicalSerialize}(P,M,R,T,K,\text{Mem},S))</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="sans-serif">𝖠𝖠𝖲𝖴_𝖨𝖣</mtext><mo>=</mo><mi>H</mi><mo stretchy="false" form="prefix">(</mo><mtext mathvariant="sans-serif">𝖢𝖺𝗇𝗈𝗇𝗂𝖼𝖺𝗅𝖲𝖾𝗋𝗂𝖺𝗅𝗂𝗓𝖾</mtext><mo stretchy="false" form="prefix">(</mo><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mi>S</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\textsf{AASU\_ID} = H(\textsf{CanonicalSerialize}(P,M,R,T,K,S))</annotation></semantics></math>
 where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>
 is a collision-resistant hash (e.g., SHA-256) applied to a deterministic
@@ -875,7 +870,7 @@ class="smallcaps">AASU</span>s.</p></li>
 class="smallcaps">AASU</span> Components</h1>
 <p>We recommend threat models that explicitly enumerate assets, actors,
 trust boundaries, and data flows across
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mtext mathvariant="normal">Mem</mtext><mo>,</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">P,M,R,T,K,\text{Mem},S</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">P,M,R,T,K,S</annotation></semantics></math>
 and across edges. This structure aligns naturally with security
 taxonomies such as OWASP Top 10 for LLM Applications <span
 class="citation" data-cites="owasp_llm_top10">(OWASP Foundation
@@ -1092,7 +1087,7 @@ and rate limiting</td>
 class="citation" data-cites="mitre_atlas">(MITRE 2020)</span>. In <span
 class="smallcaps">AASU</span> terms, many technique families can be
 localized to one or more of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mtext mathvariant="normal">Mem</mtext><mo>,</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">P,M,R,T,K,\text{Mem},S</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">P,M,R,T,K,S</annotation></semantics></math>
 and to graph edges (e.g., persistence via memory, lateral movement via
 cross-agent pivots), enabling consistent evidence collection across red
 team exercises and audits.</p>
@@ -1194,7 +1189,7 @@ define/update configuration, generate a manifest, compute <span
 class="smallcaps">AASU</span>_ID, run layered tests, perform risk
 review, deploy the certified snapshot, monitor and retain evidence, and
 trigger recertification on any change to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mtext mathvariant="normal">Mem</mtext><mo>,</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">P,M,R,T,K,\text{Mem},S</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>,</mo><mi>M</mi><mo>,</mo><mi>R</mi><mo>,</mo><mi>T</mi><mo>,</mo><mi>K</mi><mo>,</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">P,M,R,T,K,S</annotation></semantics></math>
 or key dependencies.</p>
 <figure id="fig:lifecycle">
 
@@ -1213,7 +1208,7 @@ or key dependencies.</p>
 
   <rect x="30" y="86" width="130" height="54" rx="10" ry="10" class="box"/>
   <text x="95" y="110" text-anchor="middle" class="tB">Define / update</text>
-  <text x="95" y="128" text-anchor="middle" class="tB">P,M,R,T,K + Mem,S</text>
+  <text x="95" y="128" text-anchor="middle" class="tB">P,M,R,T,K + S</text>
 
   <rect x="180" y="86" width="130" height="54" rx="10" ry="10" class="box"/>
   <text x="245" y="110" text-anchor="middle" class="tB">Generate</text>
