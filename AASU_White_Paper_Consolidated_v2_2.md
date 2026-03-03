@@ -430,7 +430,7 @@ Taxonomies evolve. The mappings below reflect the referenced versions used in th
 | ASI03 | Identity & Privilege Abuse | T |
 | ASI04 | Agentic Supply Chain | MCP / tool ecosystem |
 | ASI05 | Unexpected Code Execution | Tool runtime |
-| ASI06 | Memory Poisoning | R |
+| ASI06 | Memory Poisoning | H |
 | ASI07 | Inter-Agent Insecurity | Routing |
 | ASI08 | Cascading Failures | Sequential chains |
 | ASI09 | Human-Agent Trust Exploitation | UX |
