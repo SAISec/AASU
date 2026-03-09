@@ -1,0 +1,21 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:store:memory:customer-support-prod
+  name: Memory Store (Customer Support / prod)
+  owners:
+    - type: team
+      id: data-platform
+      role: primary
+    - type: team
+      id: appsec
+      role: security
+spec:
+  type: store
+  lifecycle: active
+  environment: prod
+  store:
+    kind: memory
+    platform: managed
+    encryption_at_rest: true
+

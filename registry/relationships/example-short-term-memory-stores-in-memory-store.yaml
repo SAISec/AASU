@@ -1,0 +1,9 @@
+apiVersion: aasu.ai/v1alpha1
+kind: Relationship
+metadata:
+  id: rel:ci:memory_short_term_profile:customer-support:session:v1:stores_memory_in:store
+spec:
+  type: stores_memory_in
+  from: ci:memory_short_term_profile:customer-support:session:v1
+  to: ci:store:memory:customer-support-prod
+

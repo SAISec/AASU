@@ -1,0 +1,9 @@
+apiVersion: aasu.ai/v1alpha1
+kind: Relationship
+metadata:
+  id: rel:ci:context_graph_profile:customer-support:prod:v1:context_graph_derived_from:kg
+spec:
+  type: context_graph_derived_from
+  from: ci:context_graph_profile:customer-support:prod:v1
+  to: ci:knowledge_graph:customer-support:prod:v1
+

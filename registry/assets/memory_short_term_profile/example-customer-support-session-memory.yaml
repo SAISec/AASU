@@ -1,0 +1,23 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:memory_short_term_profile:customer-support:session:v1
+  name: Short-Term Memory Profile (Customer Support Session) v1
+  owners:
+    - type: team
+      id: product-ai
+      role: primary
+    - type: team
+      id: appsec
+      role: security
+spec:
+  type: memory_short_term_profile
+  lifecycle: active
+  environment: prod
+  memory:
+    scope: thread
+    max_turns: 20
+    ttl_minutes: 120
+    tool_output_retention: minimal
+    cross_user_isolation: required
+

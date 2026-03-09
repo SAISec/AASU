@@ -73,7 +73,14 @@
             "policy",
             "service",
             "pipeline",
-            "store"
+            "store",
+            "skill_package",
+            "memory_short_term_profile",
+            "memory_long_term_profile",
+            "knowledge_graph",
+            "context_graph_profile",
+            "aibom_document",
+            "attestation_bundle"
           ]
         },
         "lifecycle": {

@@ -1,0 +1,9 @@
+apiVersion: aasu.ai/v1alpha1
+kind: Relationship
+metadata:
+  id: rel:ci:attestation_bundle:aasu:customer-support-chatbot:prod:2026-02-25:attests:aibom
+spec:
+  type: attests
+  from: ci:attestation_bundle:aasu:customer-support-chatbot:prod:2026-02-25
+  to: ci:aibom_document:model:openai:gpt-4o:2026-02-20
+

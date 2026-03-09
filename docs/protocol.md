@@ -111,6 +111,12 @@ Required minimum fields:
 - `spec.type`
 - `spec.lifecycle`
 
+Recommended CI classes for regulated agentic systems:
+- Core runtime: `aasu`, `model`, `prompt_package`, `retrieval`, `tool`, `policy`
+- Governance extensions: `skill_package`, `memory_short_term_profile`, `memory_long_term_profile`
+- Graph context: `knowledge_graph`, `context_graph_profile`
+- Supply chain and evidence: `aibom_document`, `attestation_bundle`
+
 ### 4.2 Relationship manifest
 Each relationship is a YAML file with:
 - `kind`: `Relationship`
@@ -118,6 +124,17 @@ Each relationship is a YAML file with:
 - `spec.type`: relationship type
 - `spec.from`: source CI ID
 - `spec.to`: destination CI ID
+
+Recommended relationship types for governance extensions:
+- `uses_skill`
+- `uses_short_term_memory`
+- `uses_long_term_memory`
+- `uses_knowledge_graph`
+- `uses_context_graph_profile`
+- `context_graph_derived_from`
+- `stores_memory_in`
+- `indexes_from_corpus`
+- `attests`
 
 ### 4.3 AASU snapshot & fingerprint (the core AASU binding)
 For CIs where `spec.type: aasu`, the manifest MUST include:
@@ -127,6 +144,12 @@ For CIs where `spec.type: aasu`, the manifest MUST include:
 **Fingerprint rule (v1):**
 - Canonicalize `spec.aasu.snapshot` to JSON with sorted keys
 - Compute `sha256` and store as `sha256:<64-hex>`
+
+Validation invariants for regulated profiles:
+- AASUs MAY omit memory relationships.
+- If an AASU references long-term memory, it MUST also reference short-term memory.
+- If an AASU enables memory in production, it MUST reference exactly one long-term memory profile.
+- If an AASU references a context graph profile, it MUST also reference a knowledge graph.
 
 ---
 

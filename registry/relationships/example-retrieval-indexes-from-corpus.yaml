@@ -1,0 +1,9 @@
+apiVersion: aasu.ai/v1alpha1
+kind: Relationship
+metadata:
+  id: rel:ci:retrieval:index:customer-support-kb:prod:2026-02-01:indexes_from_corpus:dataset
+spec:
+  type: indexes_from_corpus
+  from: ci:retrieval:index:customer-support-kb:prod:2026-02-01
+  to: ci:dataset:customer-support-kb:prod:2026-02-01
+

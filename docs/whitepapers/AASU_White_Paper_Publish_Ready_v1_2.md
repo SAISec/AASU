@@ -48,6 +48,27 @@ Any change in P, M, R, T, K, H, or S creates a new AASU.
 
 ------------------------------------------------------------------------
 
+## 1.2 Implementation Governance Profile (2026-02-28)
+
+The operational profile keeps `(P,M,R,T,K)` unchanged while modeling
+skills, memory, graph context, and attestations as separate governed
+assets.
+
+``` mermaid
+flowchart LR
+    AASU["AASU (P,M,R,T,K)"] -->|uses_skill| SK["Skill package"]
+    AASU -->|uses_short_term_memory| STM["Short-term memory profile"]
+    AASU -->|uses_long_term_memory| LTM["Long-term memory profile"]
+    AASU -->|uses_knowledge_graph| KG["Knowledge graph"]
+    AASU -->|uses_context_graph_profile| CG["Context graph profile"]
+    CG -->|context_graph_derived_from| KG
+    AIBOM["AIBOM document"] -->|attests| MODEL["Model CI"]
+    ATT["Attestation bundle"] -->|attests| AASU
+    ATT -->|attests| AIBOM
+```
+
+------------------------------------------------------------------------
+
 # 2. Architecture Patterns with Mermaid Diagrams
 
 ## 2.1 Single AASU

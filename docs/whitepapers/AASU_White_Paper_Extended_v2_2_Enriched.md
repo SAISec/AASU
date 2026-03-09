@@ -9,6 +9,7 @@
 **Document ID:** AASU-WP-2.2\
 **Version:** 2.2 (Highly Enriched Edition)\
 **Date:** 2026-02-23\
+**Implementation Revision Note:** 2026-02-28 (v1alpha2 registry/governance extensions)\
 **Intended Audience:**\
 CISO \| AI Security Engineering \| Red Team \| ML Platform \| Risk & GRC
 \| Enterprise Architecture \| Regulators
@@ -40,6 +41,7 @@ and expands it into:
 -   Governance & compliance model\
 -   Coverage metrics framework\
 -   Enterprise operating model
+-   Skills, short/long-term memory, graph-context, AIBOM and attestation governance profile
 
 ------------------------------------------------------------------------
 
@@ -71,6 +73,27 @@ H = History/Memory Configuration\
 S = Skill Configuration
 
 Any change in P, M, R, T, K, H, or S creates a new AASU.
+
+------------------------------------------------------------------------
+
+## 2.1 Implementation Governance Profile (2026-02-28)
+
+The operational profile keeps `(P,M,R,T,K)` unchanged while modeling
+skills, memory, graph context, and attestations as separate governed
+assets.
+
+``` mermaid
+flowchart LR
+    AASU["AASU (P,M,R,T,K)"] -->|uses_skill| SK["Skill package"]
+    AASU -->|uses_short_term_memory| STM["Short-term memory profile"]
+    AASU -->|uses_long_term_memory| LTM["Long-term memory profile"]
+    AASU -->|uses_knowledge_graph| KG["Knowledge graph"]
+    AASU -->|uses_context_graph_profile| CG["Context graph profile"]
+    CG -->|context_graph_derived_from| KG
+    AIBOM["AIBOM document"] -->|attests| MODEL["Model CI"]
+    ATT["Attestation bundle"] -->|attests| AASU
+    ATT -->|attests| AIBOM
+```
 
 ------------------------------------------------------------------------
 
@@ -148,6 +171,17 @@ flowchart TD
 
 The AASU framework enables topology-aware, configuration-bound,
 graph-based assurance for enterprise AI systems.
+
+For operational implementation in regulated environments, the current
+profile adds:
+
+-   Skills as separate `skill_package` assets
+-   Distinct short-term and long-term memory profiles
+-   Knowledge graph (durable) and context graph profile (runtime)
+-   AIBOM and attestation assets linked through relationship controls
+
+These controls preserve the core AASU tuple while materially improving
+change governance, auditability, and policy enforcement.
 
 ------------------------------------------------------------------------
 

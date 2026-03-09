@@ -33,7 +33,16 @@
             "deployed_on",
             "trains_on",
             "uses_model",
-            "uses_prompt_package"
+            "uses_prompt_package",
+            "uses_skill",
+            "uses_short_term_memory",
+            "uses_long_term_memory",
+            "uses_knowledge_graph",
+            "uses_context_graph_profile",
+            "context_graph_derived_from",
+            "stores_memory_in",
+            "indexes_from_corpus",
+            "attests"
           ]
         },
         "from": {
@@ -48,4 +57,3 @@
     }
   }
 }
-

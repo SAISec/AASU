@@ -1,0 +1,29 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:skill_package:customer-support-triage:v1
+  name: Skill Package (Customer Support Triage) v1
+  description: Reusable operational skill package for triage and refunds flows.
+  owners:
+    - type: team
+      id: product-ai
+      role: primary
+    - type: team
+      id: appsec
+      role: security
+spec:
+  type: skill_package
+  lifecycle: active
+  artifacts:
+    - kind: git
+      repo: github.com/acme/customer-support-skills
+      path: skills/customer-support-triage/SKILL.md
+      rev: "git:sha:fedcba9876543210fedcba9876543210fedcba98"
+  skill_package:
+    invocation:
+      implicit: false
+      explicit_only: true
+    declared_tools:
+      - ci:tool:mcp:refunds
+    risk_tier: medium
+

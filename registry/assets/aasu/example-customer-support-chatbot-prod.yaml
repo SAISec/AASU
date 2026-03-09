@@ -22,7 +22,7 @@ spec:
         version: "git:sha:0123456789abcdef"
       M:
         asset: ci:model:provider:openai:gpt-4o
-        version: "provider:rolling"
+        version: "provider:date:2026-02-20"
       R:
         asset: ci:retrieval:index:customer-support-kb:prod:2026-02-01
         version: "index-snapshot:2026-02-01"
@@ -40,7 +40,7 @@ spec:
         version: "skill-pack:v1"
     fingerprint:
       algorithm: sha256
-      value: sha256:06b24195807e5ea3ef75188c6441c1b078eaa51f4a4dcf658144fccb1bea91c2
+      value: sha256:9ccacacde716b19a9a56081af87022169f3bf351178b7965f4e4df2d32f97bc6
     certification:
       status: pending
       evidence:

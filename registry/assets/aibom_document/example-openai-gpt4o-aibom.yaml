@@ -1,0 +1,27 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:aibom_document:model:openai:gpt-4o:2026-02-20
+  name: AIBOM Document (OpenAI GPT-4o / 2026-02-20 profile)
+  owners:
+    - type: team
+      id: ml-platform
+      role: primary
+    - type: team
+      id: appsec
+      role: security
+spec:
+  type: aibom_document
+  lifecycle: active
+  artifacts:
+    - kind: artifact
+      url: artifact:registry/aibom/openai-gpt4o-2026-02-20.cdx.json
+  aibom:
+    format: cyclonedx-mlbom
+    version: "1.7"
+    model_asset: ci:model:provider:openai:gpt-4o
+    parameters_profile:
+      temperature: "0.2"
+      top_p: "0.95"
+      max_tokens: "1024"
+

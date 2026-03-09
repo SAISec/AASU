@@ -3,9 +3,9 @@
 This roadmap is derived from `TODO.md` and reflects planned updates.
 
 ## Near-term
-- Expand skills and memory capabilities (additional examples and controls)
+- Operationalize skills as separate assets and memory as short-term/long-term profiles across case-study topologies
 - Detail examples from use cases
-- Do deeper mappings with OWASP, NIST, MITRE, and other standards
+- Do deeper mappings with OWASP, NIST, MITRE, and other standards (including memory and graph-context controls)
 
 ## Mid-term
 - Full alignment and usage with configuration management systems (e.g., CMDB)

@@ -7,6 +7,7 @@
 **Document ID:** AASU-WP-2.2-CONSOLIDATED  
 **Version:** 2.2 (Consolidated from v1.0, v1.2, and v2.2)  
 **Date:** 2026-02-23  
+**Implementation Revision Note:** 2026-02-28 (v1alpha2 registry/governance extensions)  
 **Intended Audience:** CISO \| AI Security Engineering \| Red Team \| AppSec \| ML Platform \| Risk & GRC \| Enterprise Architecture \| Audit/Regulators  
 **Classification:** Public / External Distribution Ready
 
@@ -27,7 +28,7 @@ This paper formalizes a security abstraction for repeatable testing and governan
 
 > **Atomic AI Security Unit (AASU)** — the smallest configuration-bound AI system instance that must be treated as a single unit for security testing, red teaming, and audit validation.
 
-It further defines architecture-aware testing patterns, a three-layer validation methodology (unit → orchestration → attack-graph), and mappings to common AI security taxonomies (OWASP and MITRE ATLAS).
+It further defines architecture-aware testing patterns, a three-layer validation methodology (unit → orchestration → attack-graph), mappings to common AI security taxonomies (OWASP and MITRE ATLAS), and implementation extensions for skills, memory, graph context, AIBOM, and attestations.
 
 ---
 
@@ -94,11 +95,31 @@ flowchart TB
   K --> Kdetail["Rate limits/timeouts<br/>Context limits<br/>Safety/guardrail enforcement"]:::detail
   H --> Hdetail["State backend<br/>Retention and TTL<br/>Memory access controls"]:::detail
   S --> Sdetail["Skill definitions<br/>Skill invocation policy<br/>Skill-scoped privileges"]:::detail
+  subgraph G["Governance Extension Assets (v1alpha2)"]
+    SKP["Skill package"]:::ext
+    STM["Short-term memory profile"]:::ext
+    LTM["Long-term memory profile"]:::ext
+    KG["Knowledge graph"]:::ext
+    CG["Context graph profile"]:::ext
+    BOM["AIBOM document"]:::ext
+    ATT["Attestation bundle"]:::ext
+  end
+
+  A -->|uses_skill| SKP
+  A -->|uses_short_term_memory| STM
+  A -->|uses_long_term_memory| LTM
+  A -->|uses_knowledge_graph| KG
+  A -->|uses_context_graph_profile| CG
+  CG -->|context_graph_derived_from| KG
+  BOM -->|attests| M
+  ATT -->|attests| A
+  ATT -->|attests| BOM
 
   classDef aasu fill:#0b7285,stroke:#083344,color:#ffffff;
   classDef id fill:#fff3bf,stroke:#f08c00,color:#7c2d12;
   classDef comp fill:#e6fcf5,stroke:#0b7285,color:#083344;
   classDef detail fill:#f8f9fa,stroke:#ced4da,color:#343a40;
+  classDef ext fill:#f1f3f5,stroke:#495057,color:#212529;
 ```
 
 Illustrative runtime flow for a single user request through an AASU:
@@ -106,24 +127,29 @@ Illustrative runtime flow for a single user request through an AASU:
 ```mermaid
 flowchart TB
   IN["User input"] --> PRE["K: Pre-guardrails<br/>(policy checks, limits, allow/deny)"]
-  PRE --> HLOAD["H: Load relevant state<br/>(policy-scoped memory)"]
+  PRE --> HLOAD["H: Load relevant memory<br/>(STM/LTM + policy filters)"]
   HLOAD --> RET{"R enabled?"}
 
   RET -->|yes| RAG["R: Retrieval<br/>(query → top-k context)"]
-  RET -->|no| ASSEMBLE["P: Prompt assembly<br/>(system + developer + user + context)"]
-  RAG --> ASSEMBLE
+  RET -->|no| CG["Context graph assembly<br/>(KG + memory + policy)"]
+  RAG --> CG
+
+  CG --> SKREQ{"Skill required?"}
+  SKREQ -->|yes| SKP["S: Skill package invocation<br/>(procedural steps)"]
+  SKREQ -->|no| ASSEMBLE["P: Prompt assembly<br/>(system + developer + user + context graph)"]
+  SKP --> ASSEMBLE
 
   ASSEMBLE --> CALL["M: Model call<br/>(model + decoding params)"]
-  CALL --> SKILL{"S: Skill invocation<br/>required?"}
-  SKILL -->|yes| SPOL["S: Skill policy + routing<br/>(allowed skills only)"]
-  SKILL -->|no| TOOL{"Tool call requested?"}
-  SPOL --> TOOL
+  CALL --> TOOL{"Tool call requested?"}
 
   TOOL -->|yes| EXEC["T: Tool / MCP execution<br/>(permissions + sandbox)"]
-  EXEC --> ASSEMBLE
+  EXEC --> LTMQ{"Persist to long-term memory?"}
+  LTMQ -->|yes| LTMW["H: LTM write<br/>(consent + retention policy)"]
+  LTMQ -->|no| ASSEMBLE
+  LTMW --> ASSEMBLE
 
   TOOL -->|no| POST["K: Post-guardrails<br/>(output filtering + safe handling)"]
-  POST --> HSAVE["H: Persist approved state<br/>(TTL + redaction rules)"]
+  POST --> HSAVE["H: Persist short-term state<br/>(TTL + redaction rules)"]
   HSAVE --> OUT["Response"]
 ```
 
@@ -275,7 +301,16 @@ flowchart LR
     ORCH -->|TB3| TOOL[Tool / MCP runtime]
     TOOL --> SYS[(Enterprise systems)]
 
-    ORCH --> MEM[Session memory / state]
+    ORCH --> STM[Short-term memory profile]
+    ORCH --> LTM[Long-term memory profile]
+    STM --> MSTORE[(Memory store)]
+    LTM --> MSTORE
+    ORCH --> KG[Knowledge graph]
+    ORCH --> CG[Context graph profile]
+    CG --> KG
+    ORCH --> SK[Skill package registry]
+    ORCH --> BOM[AIBOM docs]
+    ORCH --> ATT[Attestation bundle]
     ORCH --> LOG[Audit logs / telemetry]
 
     ORCH --> A1["AASU-1<br/>(core + H,S)"]
@@ -349,10 +384,13 @@ Test the full directed graph as an attack surface:
 
 ```mermaid
 flowchart LR
-  DEV["Define / update AASU config<br/>(P, M, R, T, K, H, S)"] --> MAN["Generate manifest<br/>(versioned snapshot)"]
-  MAN --> HASH["Compute AASU ID<br/>(configuration hash)"]
+  DEV["Define / update AASU config<br/>(P, M, R, T, K)"] --> MAN["Generate manifest<br/>(versioned snapshot)"]
+  MAN --> EXT["Bind extension assets<br/>(H memory, S skills, KG/CG)"]
+  EXT --> HASH["Compute AASU ID<br/>(configuration hash)"]
+  HASH --> BOM["Generate/update AIBOM"]
+  BOM --> ATT["Create signed attestation bundle"]
 
-  HASH --> T1["Layer 1 tests<br/>(AASU-level)"]
+  ATT --> T1["Layer 1 tests<br/>(AASU-level)"]
   T1 --> T2["Layer 2 tests<br/>(orchestration)"]
   T2 --> T3["Layer 3 tests<br/>(attack-graph)"]
 
@@ -384,6 +422,59 @@ Each AASU should maintain, at minimum:
 - Node/path/topology coverage metrics for complex systems
 - Traceable certification statements tied to specific AASU IDs
 - Risk acceptance tied to explicit configuration snapshots (not “the chatbot in general”)
+
+### 6.3 Implementation Profile Update (2026-02-28): Skills, Memory, Graph Context, AIBOM, and Attestations
+
+For operational governance in regulated environments, this implementation profile adds first-class assets and relationship controls while preserving the core AASU tuple `(P,M,R,T,K)`.
+
+**Design principles:**
+- Keep AASU core unchanged for conceptual stability.
+- Treat skills as **separate assets**, not inline prompt/memory text.
+- Split memory into distinct **short-term** and **long-term** profiles.
+- Distinguish durable **knowledge graph** from runtime **context graph profile**.
+- Attach model inventory and supply-chain evidence through **AIBOM** and **attestation bundles**.
+
+**Required relationship controls (production profile):**
+- AASUs MAY omit memory relationships.
+- If long-term memory is configured, short-term memory is mandatory.
+- Memory-enabled production AASUs reference exactly one long-term memory profile.
+- If context graph profile is used, a knowledge graph reference is mandatory.
+- Production AASUs require attestation linkage and model AIBOM linkage.
+
+**Representative CI classes:**
+- `skill_package`
+- `memory_short_term_profile`
+- `memory_long_term_profile`
+- `knowledge_graph`
+- `context_graph_profile`
+- `aibom_document`
+- `attestation_bundle`
+
+**Representative relationships:**
+- `uses_skill`
+- `uses_short_term_memory`
+- `uses_long_term_memory`
+- `uses_knowledge_graph`
+- `uses_context_graph_profile`
+- `context_graph_derived_from`
+- `stores_memory_in`
+- `indexes_from_corpus`
+- `attests`
+
+```mermaid
+flowchart LR
+  AASU["ci:aasu:*"] -->|uses_skill| SK["ci:skill_package:*"]
+  AASU -->|uses_short_term_memory| STM["ci:memory_short_term_profile:*"]
+  AASU -->|uses_long_term_memory| LTM["ci:memory_long_term_profile:*"]
+  AASU -->|uses_knowledge_graph| KG["ci:knowledge_graph:*"]
+  AASU -->|uses_context_graph_profile| CG["ci:context_graph_profile:*"]
+  CG -->|context_graph_derived_from| KG
+  STM -->|stores_memory_in| STORE["ci:store:memory:*"]
+  LTM -->|stores_memory_in| STORE
+  AIBOM["ci:aibom_document:*"] -->|attests| MODEL["ci:model:*"]
+  ATT["ci:attestation_bundle:*"] -->|attests| AASU
+  ATT -->|attests| AIBOM
+```
 
 ---
 
@@ -430,7 +521,7 @@ Taxonomies evolve. The mappings below reflect the referenced versions used in th
 | ASI03 | Identity & Privilege Abuse | T |
 | ASI04 | Agentic Supply Chain | MCP / tool ecosystem |
 | ASI05 | Unexpected Code Execution | Tool runtime |
-| ASI06 | Memory Poisoning | H |
+| ASI06 | Memory Poisoning | H (STM/LTM profiles, context graph) |
 | ASI07 | Inter-Agent Insecurity | Routing |
 | ASI08 | Cascading Failures | Sequential chains |
 | ASI09 | Human-Agent Trust Exploitation | UX |
@@ -458,6 +549,8 @@ Taxonomies evolve. The mappings below reflect the referenced versions used in th
 **AASU core = (P, M, R, T, K) + extension (H, S)**
 
 **AI System = Directed Graph of AASUs**
+
+**Governance Extension Assets = {Skills, Short-Term Memory, Long-Term Memory, Knowledge Graph, Context Graph Profile, AIBOM, Attestations}**
 
 **Security Risk = f(Configuration, Topology, Privilege Edges, Routing Logic)**
 

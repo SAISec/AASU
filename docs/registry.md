@@ -15,6 +15,23 @@ Validate all manifests (schemas + relationship integrity + AASU fingerprint chec
 python3 tools/aasu_registry.py validate
 ```
 
+Run regulated policy checks (pinning, memory links, attestation linkage):
+
+```bash
+python3 tools/aasu_registry.py policy-check
+```
+
+To enforce stricter production policy (memory required for all production AASUs):
+
+```bash
+python3 tools/aasu_registry.py policy-check --require-memory-for-prod
+```
+
+Current unpinned version detection flags:
+- moving aliases such as `latest` and `rolling`
+- branch refs such as `main`, `master`, `trunk`, `head`
+- explicit branch references such as `git:branch:*`, `branch:*`, and `refs/heads/*`
+
 After editing an AASU snapshot `(P,M,R,T,K)` (or extension components `H`/`S`), update fingerprints and re-validate:
 
 ```bash
@@ -38,6 +55,18 @@ Export registry manifests as JSON (for CMDB sync tooling):
 
 ```bash
 python3 tools/aasu_registry.py export --pretty --out registry-export.json
+```
+
+Audit short-term and long-term memory coverage:
+
+```bash
+python3 tools/aasu_registry.py memory-audit --strict
+```
+
+Verify attestation relationships:
+
+```bash
+python3 tools/aasu_registry.py attest-verify
 ```
 
 ## GitHub PR workflow (recommended)

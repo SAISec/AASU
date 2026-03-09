@@ -1,0 +1,26 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:attestation_bundle:aasu:customer-support-chatbot:prod:2026-02-25
+  name: Attestation Bundle (Customer Support AASU / prod / 2026-02-25)
+  owners:
+    - type: team
+      id: appsec
+      role: primary
+    - type: team
+      id: risk-grc
+      role: governance
+spec:
+  type: attestation_bundle
+  lifecycle: active
+  environment: prod
+  artifacts:
+    - kind: artifact
+      url: artifact:registry/attestations/customer-support-aasu-prod-2026-02-25.intoto.jsonl
+  attestation_bundle:
+    signatures:
+      - sigstore-cosign
+    statement_types:
+      - in-toto
+      - slsa-provenance
+
