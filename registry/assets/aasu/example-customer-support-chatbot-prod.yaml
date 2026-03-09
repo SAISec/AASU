@@ -40,7 +40,7 @@ spec:
         version: "skill-pack:v1"
     fingerprint:
       algorithm: sha256
-      value: sha256:9ccacacde716b19a9a56081af87022169f3bf351178b7965f4e4df2d32f97bc6
+      value: sha256:db2be1716d5f009a7315f73dec095c090fb97f2af97dc18e3569a0409fc0f6dd
     certification:
       status: pending
       evidence:
