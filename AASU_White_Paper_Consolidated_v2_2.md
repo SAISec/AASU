@@ -54,7 +54,8 @@ Not:
 
 An AASU is a tightly bound, versioned configuration:
 
-**AASU = (P, M, R, T, K)**
+**AASU core = (P, M, R, T, K)**  
+**AASU extension = (H, S)**
 
 Where:
 - **P = Prompt Package** (system prompts, templates, policy prompts, routing prompts, prompt hierarchy, prompt chaining)
@@ -62,6 +63,8 @@ Where:
 - **R = Retrieval Configuration** (RAG settings, corpus selection, embedding model, chunking, filters, top-k, thresholds)
 - **T = Tool/MCP Configuration** (tool schemas, connectors/plugins, permissions, execution environment, Model Context Protocol if present)
 - **K = Runtime Constraints / Guardrails** (policy enforcement, timeouts, rate limits, context limits, safety filters, sandbox constraints)
+- **H = History/Memory Configuration** (short/long-term memory backend, retention, access controls, state isolation)
+- **S = Skill Configuration** (skill package composition, invocation policy, skill-scoped permissions)
 
 ```mermaid
 flowchart TB
@@ -73,16 +76,27 @@ flowchart TB
   R["R — Retrieval (RAG) config"]:::comp
   T["T — Tools / MCP config"]:::comp
   K["K — Runtime constraints"]:::comp
+  H["H — History / memory config"]:::comp
+  S["S — Skill config"]:::comp
 
   A --> P
   A --> M
   A --> R
   A --> T
   A --> K
+  A --> H
+  A --> S
   A -->|certify against| ID
 
+  P --> Pdetail["System/developer prompts<br/>Prompt hierarchy<br/>Routing prompts"]:::detail
+  M --> Mdetail["Provider + model version<br/>Decoding params (temp, top_p)<br/>Max tokens"]:::detail
+  R --> Rdetail["Corpus/indices IDs<br/>Chunking + top-k<br/>Filters/thresholds"]:::detail
+  T --> Tdetail["Tool schemas<br/>Permissions/allowlists<br/>Execution environment"]:::detail
+  K --> Kdetail["Rate limits/timeouts<br/>Context limits<br/>Safety/guardrail enforcement"]:::detail
+  H --> Hdetail["State backend<br/>Retention and TTL<br/>Memory access controls"]:::detail
+  S --> Sdetail["Skill definitions<br/>Skill invocation policy<br/>Skill-scoped privileges"]:::detail
   subgraph G["Governance Extension Assets (v1alpha2)"]
-    S["Skill package"]:::ext
+    SKP["Skill package"]:::ext
     STM["Short-term memory profile"]:::ext
     LTM["Long-term memory profile"]:::ext
     KG["Knowledge graph"]:::ext
@@ -91,7 +105,7 @@ flowchart TB
     ATT["Attestation bundle"]:::ext
   end
 
-  A -->|uses_skill| S
+  A -->|uses_skill| SKP
   A -->|uses_short_term_memory| STM
   A -->|uses_long_term_memory| LTM
   A -->|uses_knowledge_graph| KG
@@ -104,6 +118,7 @@ flowchart TB
   classDef aasu fill:#0b7285,stroke:#083344,color:#ffffff;
   classDef id fill:#fff3bf,stroke:#f08c00,color:#7c2d12;
   classDef comp fill:#e6fcf5,stroke:#0b7285,color:#083344;
+  classDef detail fill:#f8f9fa,stroke:#ced4da,color:#343a40;
   classDef ext fill:#f1f3f5,stroke:#495057,color:#212529;
 ```
 
@@ -112,27 +127,33 @@ Illustrative runtime flow for a single user request through an AASU:
 ```mermaid
 flowchart TB
   IN["User input"] --> PRE["K: Pre-guardrails<br/>(policy checks, limits, allow/deny)"]
-  PRE --> CG["Context graph assembly<br/>(R + KG + STM/LTM + policy filters)"]
-  CG --> SK{"Skill required?"}
+  PRE --> HLOAD["H: Load relevant memory<br/>(STM/LTM + policy filters)"]
+  HLOAD --> RET{"R enabled?"}
 
-  SK -->|yes| SKILL["Skill package invocation<br/>(procedural memory)"]
-  SK -->|no| ASSEMBLE["P: Prompt assembly<br/>(system + developer + user + context graph)"]
-  SKILL --> ASSEMBLE
+  RET -->|yes| RAG["R: Retrieval<br/>(query → top-k context)"]
+  RET -->|no| CG["Context graph assembly<br/>(KG + memory + policy)"]
+  RAG --> CG
+
+  CG --> SKREQ{"Skill required?"}
+  SKREQ -->|yes| SKP["S: Skill package invocation<br/>(procedural steps)"]
+  SKREQ -->|no| ASSEMBLE["P: Prompt assembly<br/>(system + developer + user + context graph)"]
+  SKP --> ASSEMBLE
 
   ASSEMBLE --> CALL["M: Model call<br/>(model + decoding params)"]
   CALL --> TOOL{"Tool call requested?"}
 
   TOOL -->|yes| EXEC["T: Tool / MCP execution<br/>(permissions + sandbox)"]
-  EXEC --> MEM{"Persist to long-term memory?"}
-  MEM -->|yes| LTMW["LTM write<br/>(consent + retention policy)"]
-  MEM -->|no| ASSEMBLE
+  EXEC --> LTMQ{"Persist to long-term memory?"}
+  LTMQ -->|yes| LTMW["H: LTM write<br/>(consent + retention policy)"]
+  LTMQ -->|no| ASSEMBLE
   LTMW --> ASSEMBLE
 
   TOOL -->|no| POST["K: Post-guardrails<br/>(output filtering + safe handling)"]
-  POST --> OUT["Response"]
+  POST --> HSAVE["H: Persist short-term state<br/>(TTL + redaction rules)"]
+  HSAVE --> OUT["Response"]
 ```
 
-**Any change in P, M, R, T, or K creates a new AASU.**
+**Any change in P, M, R, T, K, H, or S creates a new AASU.**
 
 ### 2.2 Configuration Snapshot Principle
 
@@ -156,7 +177,7 @@ In enterprise systems, AASUs rarely operate in isolation. They are deployed in d
 
 ```mermaid
 flowchart LR
-    User --> AASU
+    User --> AASU["AASU<br/>(P,M,R,T,K + H,S)"]
     AASU --> Output
 ```
 
@@ -172,9 +193,9 @@ User → AASU-1 → AASU-2 → AASU-3 → Output
 
 ```mermaid
 flowchart LR
-    User --> A1[AASU-1]
-    A1 --> A2[AASU-2]
-    A2 --> A3[AASU-3]
+    User --> A1["AASU-1<br/>(core + H,S)"]
+    A1 --> A2["AASU-2<br/>(core + H,S)"]
+    A2 --> A3["AASU-3<br/>(core + H,S)"]
     A3 --> Output
 ```
 
@@ -196,9 +217,9 @@ User → Router → Multiple Independent AASUs → Output(s)
 ```mermaid
 flowchart LR
     User --> Router
-    Router --> A1[AASU-A]
-    Router --> A2[AASU-B]
-    Router --> A3[AASU-C]
+    Router --> A1["AASU-A<br/>(core + H,S)"]
+    Router --> A2["AASU-B<br/>(core + H,S)"]
+    Router --> A3["AASU-C<br/>(core + H,S)"]
     A1 --> Output
     A2 --> Output
     A3 --> Output
@@ -223,11 +244,11 @@ Edges = data-flow, context-flow, or tool-result reinjection relationships
 ```mermaid
 flowchart TD
     User --> R[Router]
-    R --> A1[AASU-1]
-    R --> A2[AASU-2]
-    A1 --> B1[AASU-3]
+    R --> A1["AASU-1<br/>(core + H,S)"]
+    R --> A2["AASU-2<br/>(core + H,S)"]
+    A1 --> B1["AASU-3<br/>(core + H,S)"]
     A2 --> B1
-    B1 --> C1[AASU-4]
+    B1 --> C1["AASU-4<br/>(core + H,S)"]
     C1 --> Output
 ```
 
@@ -292,8 +313,8 @@ flowchart LR
     ORCH --> ATT[Attestation bundle]
     ORCH --> LOG[Audit logs / telemetry]
 
-    ORCH --> A1[AASU-1]
-    ORCH --> A2[AASU-2]
+    ORCH --> A1["AASU-1<br/>(core + H,S)"]
+    ORCH --> A2["AASU-2<br/>(core + H,S)"]
     A1 <-->|TB5| A2
   end
 
@@ -364,7 +385,7 @@ Test the full directed graph as an attack surface:
 ```mermaid
 flowchart LR
   DEV["Define / update AASU config<br/>(P, M, R, T, K)"] --> MAN["Generate manifest<br/>(versioned snapshot)"]
-  MAN --> EXT["Bind extension assets<br/>(skills, STM/LTM, KG/CG)"]
+  MAN --> EXT["Bind extension assets<br/>(H memory, S skills, KG/CG)"]
   EXT --> HASH["Compute AASU ID<br/>(configuration hash)"]
   HASH --> BOM["Generate/update AIBOM"]
   BOM --> ATT["Create signed attestation bundle"]
@@ -500,7 +521,7 @@ Taxonomies evolve. The mappings below reflect the referenced versions used in th
 | ASI03 | Identity & Privilege Abuse | T |
 | ASI04 | Agentic Supply Chain | MCP / tool ecosystem |
 | ASI05 | Unexpected Code Execution | Tool runtime |
-| ASI06 | Memory Poisoning | Short-term/Long-term Memory Profiles, Context Graph |
+| ASI06 | Memory Poisoning | H (STM/LTM profiles, context graph) |
 | ASI07 | Inter-Agent Insecurity | Routing |
 | ASI08 | Cascading Failures | Sequential chains |
 | ASI09 | Human-Agent Trust Exploitation | UX |
@@ -525,7 +546,7 @@ Taxonomies evolve. The mappings below reflect the referenced versions used in th
 
 ## 8. Formal Model Summary
 
-**AASU = (P, M, R, T, K)**
+**AASU core = (P, M, R, T, K) + extension (H, S)**
 
 **AI System = Directed Graph of AASUs**
 

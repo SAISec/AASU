@@ -25,8 +25,11 @@ This protocol is designed to be:
 ### 1.1 Why AASU needs “configuration CMDB”, not “app CMDB”
 The AASU model formalizes that an AI capability is a **configuration-bound unit**:
 
-**AASU = (P, M, R, T, K)**  
+**AASU core = (P, M, R, T, K)**  
 Prompt package, Model instance, Retrieval configuration, Tool/MCP configuration, Runtime constraints.
+
+**AASU extension = (H, S)**  
+History/memory configuration and skill configuration.
 
 Security and assurance therefore require:
 - A **versioned manifest** per deployed configuration snapshot
@@ -44,7 +47,7 @@ Traditional CMDBs are valuable for operational discovery, but are frequently wea
 Minimum requirements for a practical AASU asset registry:
 
 **Inventory & ownership**
-- Every AI-relevant asset is a CI: prompt packages, models, retrieval indices, tools/MCP servers, runtime policies, and AASU snapshots.
+- Every AI-relevant asset is a CI: prompt packages, models, retrieval indices, tools/MCP servers, runtime policies, memory configurations, skill configurations, and AASU snapshots.
 - Every CI has explicit **owners** (primary + security/ops as applicable).
 
 **Relationship graph**
@@ -52,7 +55,7 @@ Minimum requirements for a practical AASU asset registry:
 - Relationships must be queryable and reviewable like code.
 
 **Snapshot binding**
-- AASU snapshots MUST be representable as an immutable tuple `(P,M,R,T,K)` with explicit version references (commit SHA, image digest, provider snapshot ID).
+- AASU snapshots MUST be representable as an immutable tuple `(P,M,R,T,K)` with optional extension components `(H,S)` for memory and skills, using explicit version references (commit SHA, image digest, provider snapshot ID).
 - Each snapshot MUST compute a deterministic **fingerprint** (e.g., `sha256:`) and treat that as the canonical identity for certification.
 
 **Change control**
@@ -135,7 +138,7 @@ Recommended relationship types for governance extensions:
 
 ### 4.3 AASU snapshot & fingerprint (the core AASU binding)
 For CIs where `spec.type: aasu`, the manifest MUST include:
-- `spec.aasu.snapshot`: the exact `(P,M,R,T,K)` tuple using **versioned references**
+- `spec.aasu.snapshot`: the exact `(P,M,R,T,K)` tuple, optionally extended with `(H,S)`, using **versioned references**
 - `spec.aasu.fingerprint`: deterministic hash of `spec.aasu.snapshot`
 
 **Fingerprint rule (v1):**

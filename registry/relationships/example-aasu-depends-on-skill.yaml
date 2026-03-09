@@ -1,0 +1,8 @@
+apiVersion: aasu.ai/v1alpha1
+kind: Relationship
+metadata:
+  id: rel:ci:aasu:customer-support-chatbot:prod:depends_on:skill
+spec:
+  type: depends_on
+  from: ci:aasu:customer-support-chatbot:prod
+  to: ci:skill:customer-support:refund-resolution:v1

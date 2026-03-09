@@ -32,7 +32,7 @@ Current unpinned version detection flags:
 - branch refs such as `main`, `master`, `trunk`, `head`
 - explicit branch references such as `git:branch:*`, `branch:*`, and `refs/heads/*`
 
-After editing an AASU snapshot `(P,M,R,T,K)`, update fingerprints and re-validate:
+After editing an AASU snapshot `(P,M,R,T,K)` (or extension components `H`/`S`), update fingerprints and re-validate:
 
 ```bash
 python3 tools/aasu_registry.py fingerprint --all --write

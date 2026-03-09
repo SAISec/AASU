@@ -5,8 +5,12 @@ title: Atomic AI Security Unit (AASU)
 
 # Atomic AI Security Unit (AASU)
 
-**AASU = (P, M, R, T, K)**  
+**AASU core = (P, M, R, T, K)**  
 Prompt package, Model instance & parameters, Retrieval configuration, Tool/MCP configuration, Runtime constraints.
+
+**AASU extension = (H, S)**  
+History/memory configuration and skill configuration.
+
 This site provides a landing page for the AASU project, including a reference registry and CLI tooling for GitHub PR workflows.
 
 ## Quick links

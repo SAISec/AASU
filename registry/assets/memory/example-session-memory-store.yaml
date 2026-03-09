@@ -1,0 +1,25 @@
+apiVersion: aasu.ai/v1alpha1
+kind: ConfigurationItem
+metadata:
+  id: ci:memory:session:customer-support-chatbot:prod
+  name: Session Memory (Customer Support Chatbot / prod)
+  owners:
+    - type: team
+      id: product-ai
+      role: primary
+    - type: team
+      id: appsec
+      role: security
+spec:
+  type: memory
+  lifecycle: active
+  environment: prod
+  memory:
+    scope: session
+    backend: redis
+    retention:
+      ttl_seconds: 3600
+      max_sessions: 10000
+    controls:
+      encryption_at_rest: true
+      pii_redaction: true

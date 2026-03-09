@@ -80,7 +80,7 @@ capability safety and least privilege.
 \paragraph{Contributions.}
 This paper makes four contributions:
 \begin{enumerate}[leftmargin=*,itemsep=2pt]
-  \item We define the \AASU{} as a configuration-bound, versioned unit of security evaluation: $\AASUm = (P,M,R,T,K)$.
+  \item We define the \AASU{} as a configuration-bound, versioned unit of security evaluation: $\AASUm = (P,M,R,T,K,H,S)$.
   \item We model deployed LLM applications as directed graphs of \AASUs{} and formalize node- and edge-scoped threat surfaces.
   \item We propose a three-layer validation methodology and coverage metrics suitable for enterprise assurance.
   \item We describe governance controls to make test results auditable and change-aware via manifests and configuration hashing.
@@ -123,7 +123,7 @@ Regulatory regimes (e.g., the EU AI Act) further increase the need for traceable
 \subsection{Definition}
 We define an \AASU{} as the minimal configuration snapshot that must be treated as a single unit for security evaluation:
 \begin{equation}
-  \AASUm = (P, M, R, T, K)
+  \AASUm = (P, M, R, T, K, H, S)
 \end{equation}
 where:
 \begin{itemize}[leftmargin=*,itemsep=2pt]
@@ -131,7 +131,9 @@ where:
   \item $M$ is the model instance and parameters (provider, model version, decoding settings),
   \item $R$ is the retrieval configuration (corpora, embedding model, chunking, filters, top-$k$, thresholds),
   \item $T$ is the tool interface and execution configuration (schemas, permissions, allow/deny lists, connector versions, runtime sandbox),
-  \item $K$ is runtime constraints and guardrails (rate limits, timeouts, context limits, output handling constraints).
+  \item $K$ is runtime constraints and guardrails (rate limits, timeouts, context limits, output handling constraints),
+  \item $H$ is the history/memory configuration (state backend, retention, and isolation controls),
+  \item $S$ is the skill configuration (skill pack definitions, invocation policy, and skill-scoped privileges).
 \end{itemize}
 
 \begin{figure}[t]
@@ -147,13 +149,17 @@ where:
     \node[comp,below=0.2cm of m] (r) {$R$ --- Retrieval (RAG) configuration};
     \node[comp,below=0.2cm of r] (t) {$T$ --- Tools / MCP configuration};
     \node[comp,below=0.2cm of t] (k) {$K$ --- Runtime constraints / guardrails};
+    \node[comp,below=0.2cm of k] (h) {$H$ --- History / memory configuration};
+    \node[comp,below=0.2cm of h] (s) {$S$ --- Skill configuration};
     \draw[->] (aasu) -- (p);
     \draw[->] (aasu) -- (m);
     \draw[->] (aasu) -- (r);
     \draw[->] (aasu) -- (t);
     \draw[->] (aasu) -- (k);
+    \draw[->] (aasu) -- (h);
+    \draw[->] (aasu) -- (s);
   \end{tikzpicture}
-  \caption{The Atomic AI Security Unit (\AASU{}) as a configuration snapshot. Any change to $P,M,R,T,$ or $K$ yields a distinct \AASU{} that requires separate assurance.}
+  \caption{The Atomic AI Security Unit (\AASU{}) as a configuration snapshot. Any change to $P,M,R,T,K,H,S$ yields a distinct \AASU{} that requires separate assurance.}
   \label{fig:aasu}
 \end{figure}
 
@@ -164,7 +170,7 @@ Therefore, security evaluation must bind to a concrete configuration snapshot.
 
 We recommend representing each \AASU{} as a canonical manifest (e.g., JSON) and computing an identifier via cryptographic hashing:
 \begin{equation}
-  \textsf{AASU\_ID} = H(\textsf{CanonicalSerialize}(P,M,R,T,K))
+  \textsf{AASU\_ID} = H(\textsf{CanonicalSerialize}(P,M,R,T,K,H,S))
 \end{equation}
 where $H$ is a collision-resistant hash (e.g., SHA-256) applied to a deterministic serialization.
 
@@ -244,7 +250,7 @@ Even if individual nodes are robust in isolation, edge-level interactions can in
 \end{itemize}
 
 \section{Threat Modeling with \AASU{} Components}
-We recommend threat models that explicitly enumerate assets, actors, trust boundaries, and data flows across $P,M,R,T,K$ and across edges.
+We recommend threat models that explicitly enumerate assets, actors, trust boundaries, and data flows across $P,M,R,T,K,H,S$ and across edges.
 This structure aligns naturally with security taxonomies such as OWASP Top 10 for LLM Applications~\cite{owasp_llm_top10} and MITRE ATLAS~\cite{mitre_atlas},
 while remaining configuration-aware.
 
@@ -340,7 +346,7 @@ Table~\ref{tab:owasp} maps OWASP categories to \AASU{} components and highlights
 \end{table}
 
 MITRE ATLAS catalogs adversarial AI tactics and techniques~\cite{mitre_atlas}.
-In \AASU{} terms, many technique families can be localized to one or more of $P,M,R,T,K$ and to graph edges (e.g., persistence via memory, lateral movement via cross-agent pivots),
+In \AASU{} terms, many technique families can be localized to one or more of $P,M,R,T,K,H,S$ and to graph edges (e.g., persistence via memory, lateral movement via cross-agent pivots),
 enabling consistent evidence collection across red team exercises and audits.
 
 \section{Three-Layer Validation Methodology}
@@ -393,7 +399,7 @@ system-level, deployment-specific configuration snapshots~\cite{model_cards,data
 
 \subsection{Lifecycle}
 We recommend the lifecycle in Figure~\ref{fig:lifecycle}: define/update configuration, generate a manifest, compute \AASU\_ID, run layered tests, perform risk review,
-deploy the certified snapshot, monitor and retain evidence, and trigger recertification on any change to $P,M,R,T,K$ or key dependencies.
+deploy the certified snapshot, monitor and retain evidence, and trigger recertification on any change to $P,M,R,T,K,H,S$ or key dependencies.
 
 \begin{figure}[t]
   \centering
@@ -401,7 +407,7 @@ deploy the certified snapshot, monitor and retain evidence, and trigger recertif
     step/.style={draw,rounded corners,minimum width=2.8cm,minimum height=0.9cm,align=center,fill=black!2},
     >=Latex
   ]
-    \node[step] (dev) {Define / update\\$P,M,R,T,K$};
+    \node[step] (dev) {Define / update\\$P,M,R,T,K,H,S$};
     \node[step,right=0.45cm of dev] (man) {Generate\\manifest};
     \node[step,right=0.45cm of man] (hash) {Compute\\\AASU\_ID};
     \node[step,right=0.45cm of hash] (test) {Run layered\\tests};
